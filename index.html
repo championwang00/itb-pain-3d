@@ -1238,7 +1238,7 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(30,1,0.05,200);
 const controls=new THREE.OrbitControls(camera,canvas);
-controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=2;controls.maxDistance=40;
+controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=.4;controls.maxDistance=40;
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f96,0.65));
 const kl=new THREE.DirectionalLight(0xffffff,1.0);kl.position.set(-6,10,8);scene.add(kl);
 const fl=new THREE.DirectionalLight(0xffffff,0.45);fl.position.set(8,4,6);scene.add(fl);
@@ -1314,16 +1314,23 @@ for(const p of meta.parts){
 
 // 脂肪垫（示意，位于髂胫束与股骨外上髁之间）
 const A=meta.anchors;
-const PAD=[A.epi[0]-3,A.epi[1]+1,A.epi[2]+6];
+const PAD=[A.epi[0]-2,A.epi[1]+1,A.epi[2]+6];
+// 让髂胫束在脂肪垫上方整片向外拱起，刚好盖住脂肪垫而不穿模（顺序：骨 → 脂肪垫 → 髂胫束 → 皮肤）
+const PAD_S=[.018,.095,.11];
+{const it=P.itb,b=it.base,ey=PAD[1]*.01,ez=PAD[2]*.01,limit=(PAD[0]*.01-PAD_S[0])-.0015;
+ const ell=(y,z)=>Math.hypot((y-ey)/PAD_S[1],(z-ez)/PAD_S[2]);   // 1 = 脂肪垫边缘
+ let need=0;for(let i=0;i<b.length;i+=3){if(ell(b[i+1],b[i+2])<1.15&&b[i]>limit)need=Math.max(need,b[i]-limit);}
+ for(let i=0;i<b.length;i+=3){const e=ell(b[i+1],b[i+2]);if(e<2.6&&b[i]>limit-.02){const f=e<1.15?1:.5+.5*Math.cos(Math.PI*(e-1.15)/1.45);b[i]-=need*f;}}
+ it.pos.set(b);it.mesh.geometry.attributes.position.needsUpdate=true;it.mesh.geometry.computeVertexNormals();}
 const padMat=new THREE.MeshStandardMaterial({color:0xefc54a,roughness:.45});padMat.userData.base=padMat.color.clone();
-const pad=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),padMat);pad.scale.set(.04,.1,.12);pad.position.copy(mm(PAD));scene.add(pad);
+const pad=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),padMat);pad.scale.set(PAD_S[0],PAD_S[1],PAD_S[2]);pad.position.copy(mm(PAD));scene.add(pad);
 P.pad={mesh:pad,mat:padMat,kind:'fat'};pad.userData.k='pad';
 
 // 刺激光晕
 function glowTex(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');const g=x.createRadialGradient(64,64,0,64,64,64);
   g.addColorStop(0,'rgba(255,70,40,1)');g.addColorStop(.35,'rgba(240,50,30,.65)');g.addColorStop(1,'rgba(220,40,20,0)');x.fillStyle=g;x.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
 const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),transparent:true,depthTest:false,depthWrite:false}));
-glow.position.copy(mm([A.epi[0]-8,A.epi[1],A.epi[2]+6]));glow.renderOrder=20;scene.add(glow);
+glow.position.copy(mm(PAD));glow.renderOrder=20;scene.add(glow);
 
 // 箭头（诱因页）
 const arrows=new THREE.Group();scene.add(arrows);arrows.visible=false;
@@ -1392,7 +1399,7 @@ function applyPose(){
       on[j]=nx;on[j+1]=ny;on[j+2]=nz;}
     p.mesh.geometry.attributes.position.needsUpdate=true;p.mesh.geometry.attributes.normal.needsUpdate=true;}
   const pv=defP(mm(PAD),'pad');pad.position.copy(pv);pad.rotation.x=-pose.hR*D2R;
-  glow.position.copy(defP(mm([A.epi[0]-8,A.epi[1],A.epi[2]+6]),'femur'));
+  glow.position.copy(defP(mm(PAD),'femur'));
 }
 function defP(v,k){const w=wts(k,v.x,v.y);xform(v.x,v.y,v.z,w[0],w[1],w[2],tmp);return new THREE.Vector3(tmp[0],tmp[1],tmp[2]);}
 // 跑步步态（右腿；左腿相位差半个周期），单位：度
@@ -1435,14 +1442,16 @@ const SL=[
   body:`<p>髂胫束上端连着两块肌肉：前面的<span class="act">阔筋膜张肌</span>（大约裤兜的位置），后面的<span class="act">臀大肌</span>（大部分浅层纤维汇入髂胫束）。三者都已描边。</p>
   <p>它们一收缩，髂胫束就被拉紧，这股张力一直传到膝盖外侧。</p>
   <p class="note">久坐、臀部肌肉发力差时，阔筋膜张肌容易代偿过劳，让髂胫束长期偏紧。</p>`},
- {k:'膝外侧近景',t:'它在膝盖外侧压着什么',cam:{t:[-112,410,82],o:[-560,70,200]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','vl'],hl:{itb:'a',pad:'h'},itbAlpha:.6,ghostOp:.08,glow:.3,
+ {k:'膝外侧近景',t:'它在膝盖外侧压着什么',glowDepth:true,cam:{t:[-112,410,82],o:[-560,70,200]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','vl'],hl:{itb:'a',pad:'h'},itbAlpha:.6,ghostOp:.08,glow:.3,
   labels:[['itbKnee','髂胫束：压人的（本身少有痛觉神经）','act',-190,-30],['pad','脂肪垫：被压疼的（痛点）','hot',-150,20],['epi','股骨外上髁：垫在下面的骨头','',80,50],['vl','股外侧肌','',-120,-40]],
-  body:`<p>镜头拉近到膝盖外侧，髂胫束（青色描边）调成了半透明。</p>
+  body:`<p>镜头拉近到膝盖外侧，髂胫束（青色描边）调成了半透明。从外往里是：皮肤 → 髂胫束 → 脂肪垫 → 骨头。点下面的按钮，可以像爆炸图一样把这几层沿里外方向拉开，看清它们的先后顺序，再合回去。</p>
   <p>在髂胫束和<b>股骨外上髁</b>之间，夹着一小层<span class="hot">脂肪垫</span>（红色描边里的黄色组织）和疏松结缔组织，有时还有滑囊。这里神经、血管很丰富，非常敏感。</p>
   <p>外面是硬韧的髂胫束，里面是骨头，中间这层软组织就是会被夹住的地方。</p>
+  <p><button class="btn" id="liftBtn">爆炸图：把这几层拉开看</button></p>
+  <p class="note"><b>脂肪垫是什么？</b>不是皮下那种储存能量的肥肉，而是一小团填在髂胫束和骨头之间的脂肪和疏松结缔组织，起缓冲作用。它是活的组织，里面有很多血管和神经末梢，所以被反复挤压后会受刺激：血流增加、局部肿胀，释放的炎症物质让神经变得敏感，一按就疼。道理和反复按压同一块淤青差不多。膝盖前方髌骨下的脂肪垫也会因为同样原因发炎。</p>
   <p class="warn"><b>谁在痛？</b>主要是这块<b>脂肪垫</b>（加上可能存在的滑囊）。髂胫束本身像一根结实的绳子，痛觉神经很少，它是施压的一方。这个病以髂胫束命名，是因为它是压迫的来源。</p>
   <p class="note"><b>痛点在哪：</b>就在股骨外上髁这个骨凸的表面。你用手指按膝外侧骨凸时，隔着皮肤和髂胫束，按到的正是下面发炎的脂肪垫，所以会觉得是「髂胫束痛」。</p>`},
- {k:'疼痛机制',t:'为什么会痛：屈膝 20–30° 时被压住',cam:{t:[-112,410,75],o:[-640,90,120]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','tibia','fibula'],hl:{itb:'a',pad:'h'},itbAlpha:.7,ghostOp:.07,glow:'flex',flex:true,
+ {k:'疼痛机制',glowDepth:true,t:'为什么会痛：屈膝 20–30° 时被压住',cam:{t:[-112,410,75],o:[-640,90,120]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','tibia','fibula'],hl:{itb:'a',pad:'h'},itbAlpha:.7,ghostOp:.07,glow:'flex',flex:true,
   labels:[['pad','脂肪垫：被夹住、发炎、疼','hot',-160,10],['itbKnee','髂胫束：从外面往里压','act',-190,-40],['epi','股骨外上髁：从里面顶着','',80,50],['gerdy','Gerdy 结节','',-150,40]],
   body:`<p>拖动下面的角度，或切到右上角的<b>跑步视角</b>：每一步落地时右膝都会经过红色区间。膝盖弯曲时，髂胫束的走向从外上髁<b>前方</b>转到<b>后方</b>。</p>
   <p>在 <span class="hot">20–30°</span> 左右它正好压在外上髁上，把脂肪垫挤得最紧。跑步时<b>每一步脚落地</b>膝盖都会经过这个角度，一次长跑就是几千次挤压，脂肪垫发炎、变敏感，于是疼痛。</p>
@@ -1492,7 +1501,7 @@ function setLook(s){
     let mode='normal';
     if(p.kind==='muscle'||p.kind==='fascia'||p.kind==='fat')mode=isF?'focus':(s.muscles==='hide'?'hide':(s.muscles==='ghost'?'ghost':'normal'));
     if(p.kind==='bone')mode=isF?'focus':(s.focus.length?'dim':'normal');
-    if(k==='pad'&&!isF&&s.muscles!=='normal')mode='hide';
+    if(k==='pad'&&!isF)mode=s.muscles==='hide'?'hide':'normal';
     p.mesh.visible=mode!=='hide';
     m.color.copy(m.userData.base);m.emissive.setRGB(0,0,0);
     m.transparent=false;m.opacity=1;m.depthWrite=true;
@@ -1574,7 +1583,8 @@ function placeLabels(now){
 }
 
 function go(i){
-  i=Math.max(0,Math.min(SL.length-1,i));if(i===cur)return;const first=cur<0;cur=i;const s=SL[i];
+  i=Math.max(0,Math.min(SL.length-1,i));if(i===cur)return;if(secOn)setSection(false);if(liftOn)setLift(false);const first=cur<0;cur=i;const s=SL[i];
+  glow.material.depthTest=!!s.glowDepth;glow.material.needsUpdate=true;
   elK.textContent=s.k;elPg.textContent=(i+1)+' / '+SL.length;elT.textContent=s.t;elB.innerHTML=s.body;
   flexbox.hidden=!s.flex;pelvbox.hidden=!s.pelvis;if(s.pelvis&&s.pelvis!=='balance')setWeak(true);if(s.pelvis==='balance'){stIdx=0;stAuto=true;stT0=performance.now();stCur.lift=0;stCur.drop=0;stCur.g=0;markStory();}
   [...dots.children].forEach((b,j)=>{if(j===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
@@ -1674,13 +1684,106 @@ function setHoverKey(k,x,y){
   if(k){const w=viewer.clientWidth,h=viewer.clientHeight;const tw=tip.offsetWidth,th=tip.offsetHeight;
     let tx=x+16,ty=y+16;if(tx+tw>w-8)tx=x-tw-16;if(ty+th>h-8)ty=y-th-16;tip.style.transform='translate('+Math.max(8,tx)+'px,'+Math.max(8,ty)+'px)';}
 }
-function pickAt(cx,cy){const r=canvas.getBoundingClientRect();hptr.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1);hray.setFromCamera(hptr,camera);
+function pickAt(cx,cy){if(secOn){setHoverKey(null);return;}const r=canvas.getBoundingClientRect();hptr.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1);hray.setFromCamera(hptr,camera);
   const list=[];for(const k in P){if(P[k].kind!=='skin'&&P[k].mesh.visible&&DESC[k])list.push(P[k].mesh);}
   const hit=hray.intersectObjects(list,false)[0];setHoverKey(hit?hit.object.userData.k:null,cx-r.left,cy-r.top);}
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;if(e.buttons){setHoverKey(null);return;}hoverEv=[e.clientX,e.clientY];});
 canvas.addEventListener('pointerleave',()=>{hoverEv=null;setHoverKey(null);});
 canvas.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];});
 canvas.addEventListener('pointerup',e=>{if(!downXY)return;const d=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);downXY=null;if(d<6&&e.pointerType!=='mouse')pickAt(e.clientX,e.clientY);});
+
+// ---------- 横切面：在膝外上髁高度横切，从上往下看层次 ----------
+let secOn=false,secGroup=null;
+function sectionLoops(pos,idx,yc){
+  const pt=new Map(),segs=[];const ek=(a,b)=>a<b?a*1e7+b:b*1e7+a;
+  for(let t=0;t<idx.length;t+=3){const v=[idx[t],idx[t+1],idx[t+2]],hits=[];
+    for(let e=0;e<3;e++){const a=v[e],b=v[(e+1)%3],ya=pos[a*3+1]-yc,yb=pos[b*3+1]-yc;
+      if((ya<0)!==(yb<0)){const k=ek(a,b);if(!pt.has(k)){const u=ya/(ya-yb);pt.set(k,[pos[a*3]+(pos[b*3]-pos[a*3])*u,pos[a*3+2]+(pos[b*3+2]-pos[a*3+2])*u]);}hits.push(k);}}
+    if(hits.length===2)segs.push(hits);}
+  const adj=new Map();segs.forEach(([a,b],i)=>{if(!adj.has(a))adj.set(a,[]);if(!adj.has(b))adj.set(b,[]);adj.get(a).push(i);adj.get(b).push(i);});
+  const used=new Uint8Array(segs.length),loops=[];
+  for(let i=0;i<segs.length;i++){if(used[i])continue;used[i]=1;const loop=[segs[i][0]];let c=segs[i][1];
+    while(c!==loop[0]){loop.push(c);const nx=(adj.get(c)||[]).find(j=>!used[j]);if(nx===undefined)break;used[nx]=1;c=segs[nx][0]===c?segs[nx][1]:segs[nx][0];}
+    if(loop.length>=3)loops.push(loop.map(k=>pt.get(k)));}
+  return loops;
+}
+const SEC_Y=PAD[1]*0.01,secAnchor={};
+function buildSection(){
+  const g=new THREE.Group(),yc=SEC_Y;
+  const addLoop=(L,col,ro,op)=>{const sh=new THREE.Shape(L.map(([x,z])=>new THREE.Vector2(x,-z)));
+    const m=new THREE.Mesh(new THREE.ShapeGeometry(sh),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,transparent:true,opacity:op,depthTest:false,depthWrite:false}));
+    m.rotation.x=-Math.PI/2;m.position.y=yc;m.renderOrder=ro;g.add(m);
+    const ln=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(L.map(([x,z])=>new THREE.Vector3(x,yc,z))),new THREE.LineBasicMaterial({color:new THREE.Color(col).multiplyScalar(.55),depthTest:false,transparent:true}));
+    ln.renderOrder=ro+.5;g.add(ln);};
+  const minX=(loops)=>{let best=null;loops.forEach(L=>L.forEach(q=>{if(q[0]<0&&(!best||q[0]<best[0]))best=q;}));return best;};
+  for(const k in P){if(k==='arms'||k==='pad')continue;const p=P[k];if(!p.mesh.visible&&p.kind!=='skin'&&p.kind!=='muscle')continue;
+    const col=p.kind==='skin'?0xe0a98a:p.kind==='bone'?0xdcc497:p.kind==='fascia'?0x3f7fd6:0xc04a3f;
+    const ro=p.kind==='skin'?30:p.kind==='muscle'?31:p.kind==='bone'?32:33;
+    const loops=sectionLoops(p.pos,p.mesh.geometry.index.array,yc).filter(L=>L.length>8);
+    loops.forEach(L=>addLoop(L,col,ro,p.kind==='skin'?.28:p.kind==='muscle'?.85:1));
+    if(k==='itb')loops.forEach(L=>{const pts=L.filter((_,i)=>i%2===0).map(([x,z])=>new THREE.Vector3(x,yc,z));if(pts.length<4)return;
+      const tube=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,true),Math.max(40,pts.length*2),.0016,8,true),new THREE.MeshBasicMaterial({color:0x2f6fd0,depthTest:false,transparent:true}));tube.renderOrder=35;g.add(tube);});
+    if(k==='itb'&&loops.length){let best=null,bd=1e9;const pc=[PAD[0]*.01,PAD[2]*.01];loops.forEach(L=>L.forEach(q=>{const d=Math.hypot(q[0]-pc[0],q[1]-pc[1]);if(q[0]<pc[0]&&d<bd){bd=d;best=q;}}));if(best)secAnchor.itb=new THREE.Vector3(best[0]-.001,yc,best[1]);}
+    if(k==='femur'){const q=minX(loops);if(q)secAnchor.bone=new THREE.Vector3(q[0]+.006,yc,q[1]);}
+    if(k==='skin'){const q=minX(loops);if(q)secAnchor.skin=new THREE.Vector3(q[0],yc,q[1]);}}
+  // 脂肪垫（椭球）截面
+  const c=pad.position,sy=pad.scale.y,dy=(yc-c.y)/sy;
+  if(Math.abs(dy)<1){const f=Math.sqrt(1-dy*dy),rx=pad.scale.x*f,rz=pad.scale.z*f,L=[];for(let i=0;i<48;i++){const a=i/48*Math.PI*2;L.push([c.x+rx*Math.cos(a),c.z+rz*Math.sin(a)]);}
+    addLoop(L,0xf2b632,34,1);secAnchor.pad=new THREE.Vector3(c.x,yc,c.z);}
+  return g;
+}
+AN.secItb=()=>(secAnchor.itb||mm(PAD)).clone();AN.secPad=()=>(secAnchor.pad||mm(PAD)).clone();AN.secBone=()=>(secAnchor.bone||mm(A.epi)).clone();AN.secSkin=()=>(secAnchor.skin||mm(PAD)).clone();
+const SEC_LABELS=[['secSkin','皮肤（最外层）','',-120,-40],['secItb','髂胫束（外面压）','act',-150,-110],['secPad','脂肪垫（夹在中间）','hot',-150,110],['secBone','股骨外上髁（里面顶）','',140,-30]];
+const secPlane=new THREE.Plane(new THREE.Vector3(0,-1,0),SEC_Y);
+function setSection(on){
+  if(on===secOn)return;secOn=on;const btn=document.getElementById('secBtn');
+  if(on){if(running)setRun(false);stopPlay();setHoverKey(null);setHL({});
+    if(secGroup)scene.remove(secGroup);secGroup=buildSection();scene.add(secGroup);
+    for(const k in P){P[k].secVis=P[k].mesh.visible;P[k].mesh.visible=false;}
+    buildLabels({labels:SEC_LABELS});
+    const t=new THREE.Vector3(PAD[0]*.01+.004,SEC_Y,PAD[2]*.01+.01);
+    const asp=viewer.clientWidth/viewer.clientHeight,f=asp<.75?1.5:asp<1.05?1.2:1;
+    fly={p0:camera.position.clone(),t0:controls.target.clone(),p1:t.clone().add(new THREE.Vector3(-.02,.78,.12).multiplyScalar(f)),t1:t,s:performance.now()};
+    if(btn)btn.textContent='回到立体视角';}
+  else{if(secGroup){scene.remove(secGroup);secGroup=null;}
+    for(const k in P){if(P[k].secVis!==undefined)P[k].mesh.visible=P[k].secVis;}
+    setLook(SL[cur]);buildLabels(SL[cur]);flyTo(SL[cur]);if(btn)btn.textContent='横切面：看清里外层次';}
+}
+window.__section=setSection;
+// ---------- 爆炸图：膝外侧 骨 → 脂肪垫 → 髂胫束 → 皮肤 沿内外方向一层层拉开 ----------
+let liftOn=false,lift=0;
+const EX={pad:-.2,itb:-.55,skin:-.95};
+const LIFT_DX=EX.itb;
+// 只取膝外侧一小片皮肤，避免整张皮肤平移
+const skinPatch=(()=>{const p=P.skin,pos=p.base,idx=p.mesh.geometry.index.array,c=mm(PAD),R=.42,keep=[];
+  const ok=i=>{const x=pos[i*3],y=pos[i*3+1],z=pos[i*3+2];return x<c.x-.05&&Math.hypot(y-c.y,z-c.z)<R;};
+  for(let t=0;t<idx.length;t+=3)if(ok(idx[t])&&ok(idx[t+1])&&ok(idx[t+2]))keep.push(idx[t],idx[t+1],idx[t+2]);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos.slice(),3));g.setIndex(keep);g.computeVertexNormals();
+  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:0xe8b89c,roughness:.6,transparent:true,opacity:.55,side:THREE.DoubleSide,depthWrite:false}));
+  m.visible=false;m.renderOrder=7;scene.add(m);return m;})();
+const skinAnchor=(()=>{const c=mm(PAD),pos=P.skin.base;let best=null,bd=1e9;for(let i=0;i<pos.length;i+=3){if(pos[i]>c.x)continue;const d=Math.hypot(pos[i+1]-c.y,pos[i+2]-c.z);if(d<bd){bd=d;best=new THREE.Vector3(pos[i],pos[i+1],pos[i+2]);}}return best||c;})();
+AN.liftItb=()=>AN.itbKnee().add(new THREE.Vector3(EX.itb*lift,0,0));
+AN.expPad=()=>AN.pad().add(new THREE.Vector3(EX.pad*lift,0,0));
+AN.expSkin=()=>skinAnchor.clone().add(new THREE.Vector3(EX.skin*lift,0,0));
+AN.expItb=()=>{const c=mm(PAD);return new THREE.Vector3(c.x-.075+EX.itb*lift,c.y,c.z);};
+const LIFT_LABELS=[['expSkin','① 皮肤（最外层）','',-120,-120],['liftItb','② 髂胫束（从外面压）','act',-150,-60],['expPad','③ 脂肪垫（夹在中间，会疼）','hot',-130,110],['epi','④ 股骨外上髁（最里面的骨头）','',150,60]];
+let expLine=null;
+function setLift(on){
+  if(on===liftOn)return;liftOn=on;const btn=document.getElementById('liftBtn');
+  if(on){if(running)setRun(false);stopPlay();setHoverKey(null);buildLabels({labels:LIFT_LABELS});
+    for(const k in P){if(P[k].kind==='muscle')P[k].mesh.visible=false;}P.itb.mat.opacity=.9;
+    expLine=document.createElementNS('http://www.w3.org/2000/svg','polyline');expLine.setAttribute('fill','none');expLine.setAttribute('stroke-dasharray','6 6');expLine.setAttribute('stroke-width','1.6');ov.insertBefore(expLine,ov.firstChild);
+    const t=mm(PAD).add(new THREE.Vector3(-.55,0,0));
+    const asp=viewer.clientWidth/viewer.clientHeight,f=asp<.75?1.6:asp<1.05?1.25:1;
+    fly={p0:camera.position.clone(),t0:controls.target.clone(),p1:t.clone().add(new THREE.Vector3(-.95,.75,2.6).multiplyScalar(f)),t1:t,s:performance.now()};
+    if(btn)btn.textContent='合回去';}
+  else{expLine=null;setLook(SL[cur]);buildLabels(SL[cur]);flyTo(SL[cur]);if(btn)btn.textContent='爆炸图：把这几层拉开看';}
+}
+function drawExpLine(){if(!expLine)return;const w=viewer.clientWidth,h=viewer.clientHeight;
+  const pts=[AN.epi(),AN.expPad(),AN.expItb(),AN.expSkin()].map(v=>{const q=v.project(camera);return ((q.x*.5+.5)*w).toFixed(1)+','+((-q.y*.5+.5)*h).toFixed(1);});
+  expLine.setAttribute('points',pts.join(' '));expLine.setAttribute('stroke',getComputedStyle(document.documentElement).getPropertyValue('--muted').trim());}
+window.__lift=setLift;window.__explode=setLift;window.__dbg2=()=>JSON.stringify({cam:camera.position.toArray().map(v=>+v.toFixed(3)),tg:controls.target.toArray().map(v=>+v.toFixed(3)),fly:!!fly,lift,liftOn,itbx:P.itb.mesh.position.x,cur});window.__secDbg=()=>JSON.stringify({a:secAnchor,p:pad.position,y:SEC_Y,n:secGroup&&secGroup.children.length});
+elB.addEventListener('click',e=>{if(e.target&&e.target.id==='liftBtn')setLift(!liftOn);});
 
 // ---------- 渲染循环 ----------
 function resize(){const w=viewer.clientWidth,h=viewer.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
@@ -1844,7 +1947,7 @@ function loop(now){
   if(arrows.visible){arrows.children.forEach((g,i)=>{const [pp,kk]=ARW[i];g.position.copy(defP(mm(pp),kk));const md=SL[cur].pelvis;g.visible=md==='balance'?(i===2||(i===3&&stCur.g>.5)):(i<2&&(!md||(weak&&pD>.15)));});}
   {const fk=SL[cur].follow;const d=fk?AN[fk]().sub(mm(A[fk])):new THREE.Vector3();
    if(fly){camera.position.add(d);controls.target.add(d);}else{const sh=d.clone().sub(lastD);camera.position.add(sh);controls.target.add(sh);}lastD.copy(d);}
-  const gt=glowTarget===null?0.15+0.85*zoneI(flexDeg):glowTarget;
+  const gt=(secOn||lift>.02)?0:glowTarget===null?0.15+0.85*zoneI(flexDeg):glowTarget;
   glowNow+=(gt-glowNow)*.15;
   const pulse=reduce?1:.8+.2*Math.sin(now/220);
   glow.material.opacity=Math.min(1,glowNow*pulse);glow.visible=glowNow>.02;
@@ -1853,7 +1956,10 @@ function loop(now){
   padMat.color.copy(padMat.userData.base).lerp(new THREE.Color(0xd23d24),I*.8);
   if(itbPulse&&!SL[cur].pelvis){P.itb.mat.emissive.setRGB(.35*(.5+.5*Math.sin(now/260)),0.02,0.02);}
   if(hoverEv&&now-lastPick>40){lastPick=now;pickAt(hoverEv[0],hoverEv[1]);hoverEv=null;}
-  controls.update();renderer.render(scene,camera);renderHL(now);placeLabels(now);
+  {const tg=window.__expLevel!=null?window.__expLevel:(liftOn?1:0);lift+=(tg-lift)*(reduce?1:.05);if(Math.abs(tg-lift)<.002)lift=tg;
+   P.itb.mesh.position.x=EX.itb*lift;pad.position.copy(defP(mm(PAD),'pad'));pad.position.x+=EX.pad*lift;skinPatch.position.x=EX.skin*lift;skinPatch.visible=lift>.02;
+   if(lift>.02){P.skin.mesh.visible=P.arms.mesh.visible=false;}else if(!secOn){P.skin.mesh.visible=P.arms.mesh.visible=skinOn;}}
+  controls.update();renderer.render(scene,camera);renderHL(now);placeLabels(now);drawExpLine();
   requestAnimationFrame(loop);
 }
 go(0);
