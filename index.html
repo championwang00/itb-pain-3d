@@ -67,6 +67,10 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:900;line-height:1.2;margin:0;let
 .meter i{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:block}
 .meter b{display:block;height:100%;width:10%;background:#9bb6da;border-radius:4px}
 #pInset{width:100%;height:auto;display:block}
+.pip{position:absolute;border:2px solid var(--line);border-radius:10px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.pip.hot{border-color:var(--hot)}
+.pip span{position:absolute;left:6px;top:6px;font-size:12px;font-weight:700;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.pip.hot span{color:var(--hot);border-color:var(--hot)}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px}
 .legend{position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--muted);max-width:calc(100% - 20px)}
 .legend span{display:inline-flex;align-items:center;gap:5px}
@@ -122,6 +126,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <svg id="ov" aria-hidden="true"></svg>
       <div id="labels"></div>
       <div class="tip" id="tip" hidden></div>
+      <div class="pip" id="pip" hidden><svg id="pipSvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg><span id="pipCap">膝外侧放大：脂肪垫被挤压</span></div>
       <div class="gait" id="gait" hidden></div>
       <div class="loading" id="loading">正在加载解剖模型…</div>
       <div class="hint">拖动旋转 · 滚轮缩放 · 鼠标移到结构上看名称（手机点一下）</div>
@@ -1467,14 +1472,14 @@ const SL=[
   <li><b>手腕的劲</b> = 右臀中肌。它把骨盆右边往下拉住，左边才翘得住。</li></ul>
   <p>下面四步会自动轮播，3D 模型同步做动作；点步骤按钮可以停在某一步。</p>`},
  {k:'诱因 ②',t:'臀中肌没力：骨盆往左边掉',cam:{t:[0,700,70],o:[-120,60,2500]},skin:.2,muscles:'ghost',focus:['gmed','itb'],hl:{gmed:'a',itb:'a'},glow:0,arrows:true,pelvis:'drop',
-  labels:[['gmed','右臀中肌拉不住','act',-150,-40],['pelvisL','左侧骨盆往下掉（对侧）','hot',30,-40],['kneeIn','右膝往里扣','hot',-150,30]],
+  labels:[['hot','膝外侧痛点：被压得更狠','hot',-170,-50],['gmed','右臀中肌拉不住','act',-150,-40],['pelvisL','左侧骨盆往下掉（对侧）','hot',30,-40],['kneeIn','右膝往里扣','hot',-150,30]],
   body:`<p>右臀中肌拉不住，跷跷板失衡，没有腿撑着的<b>左边就往下掉</b>。下面可以在「有力」和「无力」之间切换对比。</p>
   <p>「对侧骨盆下沉」里的「对侧」，指的是<b>站着那条腿的对面</b>：右脚站，掉的是左边；左脚站，掉的是右边。医生检查时管这个叫 <b>Trendelenburg 征</b>。</p>
   <p>看画面上的两条线：虚线是水平线，红线连着左右两边的骨盆。骨盆一歪，两条线就张开一个角度。同时右大腿被带着往里收，右膝往里扣。</p>
   <p class="warn"><b>不是一直歪着。</b>只有右脚单独着地、左脚悬在空中的那一下会掉，左脚一落地就回平。跑步时一步一次，平一下、斜一下。掉的时候左脚在空中，不会比右脚低，腿长也没变。动画把角度放大到约 9°，真实情况通常只有几度。</p>
   <p class="note">自查：对着镜子右脚单脚站 30 秒，或者做右腿单腿下蹲。正常时两边胯一样高；如果左边胯往下掉、右膝往里扣，说明右臀中肌偏弱。在跑步视频里看起来像屁股左右扭。</p>`},
  {k:'诱因 ③',t:'骨盆一歪，髂胫束为什么被拉紧',cam:{t:[-60,690,70],o:[-1350,150,1950]},skin:.18,muscles:'ghost',focus:['itb','tfl','gmed'],hl:{itb:'a',tfl:'a',gmed:'a'},glow:.4,arrows:true,pelvis:'itb',
-  labels:[['itbMid','髂胫束被拉紧','hot',-160,10],['tfl','阔筋膜张肌替班，也在拽','act',60,-30],['gmed','臀中肌没力','act',-150,-40],['kneeIn','右膝往里扣','hot',-150,30]],
+  labels:[['hot','膝外侧痛点：被压得更狠','hot',-170,-50],['itbMid','髂胫束被拉紧','hot',-160,10],['tfl','阔筋膜张肌替班，也在拽','act',60,-30],['gmed','臀中肌没力','act',-150,-40],['kneeIn','右膝往里扣','hot',-150,30]],
   body:`<p>髂胫束上端挂在<b>右侧骨盆</b>，下端挂在<b>膝盖外侧</b>，像一根贴着大腿外侧的弦。骨盆往左歪时，有三件事让它变紧：</p>
   <ul><li><b>弦被拉长了。</b>骨盆左倾，右大腿相对骨盆往里收、膝盖往里扣，大腿外侧被撑开，上下两个挂点离得更远，髂胫束像拉弓时的弓弦一样被绷紧。示意图里的虚线是它原来的位置。</li>
   <li><b>有人替班还在拽。</b>臀中肌没力时，同样能把腿往外撑的<span class="act">阔筋膜张肌</span>会去替它干活。可阔筋膜张肌的下端接的就是髂胫束，它越用力，髂胫束被拽得越紧。</li>
@@ -1785,6 +1790,34 @@ function drawExpLine(){if(!expLine)return;const w=viewer.clientWidth,h=viewer.cl
 window.__lift=setLift;window.__explode=setLift;window.__dbg2=()=>JSON.stringify({cam:camera.position.toArray().map(v=>+v.toFixed(3)),tg:controls.target.toArray().map(v=>+v.toFixed(3)),fly:!!fly,lift,liftOn,itbx:P.itb.mesh.position.x,cur});window.__secDbg=()=>JSON.stringify({a:secAnchor,p:pad.position,y:SEC_Y,n:secGroup&&secGroup.children.length});
 elB.addEventListener('click',e=>{if(e.target&&e.target.id==='liftBtn')setLift(!liftOn);});
 
+// ---------- 膝外侧放大小窗（第 8、9 页）：实时显示脂肪垫被挤压 ----------
+let sq=0,pT=0;
+const pipCam=new THREE.PerspectiveCamera(28,1,.02,60),pipEl=document.getElementById('pip'),pipCap=document.getElementById('pipCap');
+function renderPip(){
+  const md=SL[cur].pelvis,on=(md==='drop'||md==='itb')&&!secOn&&lift<.02;pipEl.hidden=!on;if(!on)return;
+  const w=viewer.clientWidth,h=viewer.clientHeight,pw=Math.round(window.__pipBig?w*.8:Math.min(w*.32,360)),ph=Math.round(pw*.9),px=w-pw-12,pb=Math.min(70,h*.1);
+  pipEl.style.left=px+'px';pipEl.style.bottom=pb+'px';pipEl.style.width=pw+'px';pipEl.style.height=ph+'px';
+  pipEl.classList.toggle('hot',pT>.4);pipCap.textContent=pT>.4?'膝外侧放大：脂肪垫被压得更狠':'膝外侧放大：脂肪垫';
+  const t=defP(mm(PAD),'pad');const tc=t.clone().add(new THREE.Vector3(-.06,0,0));pipCam.position.copy(tc).add(new THREE.Vector3(-.12,.06,1.35));pipCam.lookAt(tc);pipCam.aspect=pw/ph;pipCam.updateProjectionMatrix();
+  const keep={skin:P.skin.mesh.visible,arms:P.arms.mesh.visible,arr:arrows.visible,op:P.itb.mat.opacity,tr:P.itb.mat.transparent,dw:P.itb.mat.depthWrite,gs:glow.scale.x,mv:{}};
+  P.skin.mesh.visible=P.arms.mesh.visible=false;arrows.visible=false;P.itb.mat.transparent=true;P.itb.mat.opacity=.8;P.itb.mat.depthWrite=false;glow.scale.setScalar(keep.gs*.35);
+  for(const k in P){if(P[k].kind==='muscle'){keep.mv[k]=P[k].mesh.visible;P[k].mesh.visible=false;}}
+  const bg=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--scene-top').trim()||'#f7f9fa');
+  const cc=renderer.getClearColor(new THREE.Color()),ca=renderer.getClearAlpha();
+  renderer.setScissorTest(true);renderer.setViewport(px,pb,pw,ph);renderer.setScissor(px,pb,pw,ph);
+  renderer.setClearColor(bg,1);renderer.autoClear=false;renderer.clear(true,true,false);renderer.render(scene,pipCam);
+  renderer.setScissorTest(false);renderer.setViewport(0,0,w,h);renderer.setClearColor(cc,ca);renderer.autoClear=true;
+  P.skin.mesh.visible=keep.skin;P.arms.mesh.visible=keep.arms;arrows.visible=keep.arr;P.itb.mat.opacity=keep.op;P.itb.mat.transparent=keep.tr;P.itb.mat.depthWrite=keep.dw;glow.scale.setScalar(keep.gs);
+  for(const k in keep.mv)P[k].mesh.visible=keep.mv[k];
+  // 两侧往里夹的箭头：左边来自髂胫束，右边来自骨头
+  const q=t.clone().project(pipCam),cx=(q.x*.5+.5)*pw,cy=(-q.y*.5+.5)*ph,L=18+26*pT,g=10+6*(1-pT),sw=(2.5+3*pT).toFixed(1),op=(.25+.75*pT).toFixed(2);
+  const hot=getComputedStyle(document.documentElement).getPropertyValue('--hot').trim();
+  const arr=(x0,x1)=>{const d=Math.sign(x1-x0);return `<path d="M${x0},${cy} L${x1},${cy} M${x1-7*d},${cy-6} L${x1},${cy} L${x1-7*d},${cy+6}" stroke="${hot}" stroke-width="${sw}" fill="none" stroke-linecap="round" opacity="${op}"/>`;};
+  document.getElementById('pipSvg').innerHTML=arr(cx-g-L,cx-g)+arr(cx+g+L,cx+g)+
+    `<text x="${cx-g-L}" y="${cy-12}" font-size="11" fill="${hot}" opacity="${op}">髂胫束压</text><text x="${cx+g+4}" y="${cy-12}" font-size="11" fill="${hot}" opacity="${op}">骨头顶</text><text x="${cx}" y="${cy+30}" font-size="12" font-weight="700" text-anchor="middle" fill="${hot}">脂肪垫（痛点）</text>`;
+}
+window.__pipInfo=()=>({sq,pT});
+
 // ---------- 渲染循环 ----------
 function resize(){const w=viewer.clientWidth,h=viewer.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
 new ResizeObserver(resize).observe(viewer);resize();
@@ -1866,7 +1899,7 @@ function pelvisFrame(now){
     else{pLift=0;d=0;pPh='B';}
     pose.hL=35*pLift;pose.kL=70*pLift;pose.kR=6+8*pLift+8*d;pose.hR=3*pLift;}
   pD=d;pose.drop=9*d;pose.add=6*d;
-  const T=weak?d:0;
+  const T=weak?d:0;pT=T;glowTarget=.15+.85*T;
   P.itb.mat.emissive.setRGB(.55*T,.04*T,.02*T);P.itb.mat.color.copy(P.itb.mat.userData.base).lerp(new THREE.Color(0xd23d24),.65*T);
   tBar.style.width=(12+80*T)+'%';tBar.style.background=T>.5?'var(--hot)':'#9bb6da';
   pState.className=T>.4?'hot':'';
@@ -1952,14 +1985,15 @@ function loop(now){
   const pulse=reduce?1:.8+.2*Math.sin(now/220);
   glow.material.opacity=Math.min(1,glowNow*pulse);glow.visible=glowNow>.02;
   const gs=.22+.12*glowNow;glow.scale.set(gs,gs,gs);
-  const I=glowTarget===null?zoneI(flexDeg):0;
-  padMat.color.copy(padMat.userData.base).lerp(new THREE.Color(0xd23d24),I*.8);
+  const md=SL[cur].pelvis;sq=window.__sq!=null?window.__sq:glowTarget===null?zoneI(flexDeg):(md==='drop'||md==='itb')?pT:0;
+  pad.scale.set(PAD_S[0]*(1-.55*sq),PAD_S[1]*(1+.18*sq),PAD_S[2]*(1+.18*sq));
+  padMat.color.copy(padMat.userData.base).lerp(new THREE.Color(0xd23d24),sq*.85);
   if(itbPulse&&!SL[cur].pelvis){P.itb.mat.emissive.setRGB(.35*(.5+.5*Math.sin(now/260)),0.02,0.02);}
   if(hoverEv&&now-lastPick>40){lastPick=now;pickAt(hoverEv[0],hoverEv[1]);hoverEv=null;}
   {const tg=window.__expLevel!=null?window.__expLevel:(liftOn?1:0);lift+=(tg-lift)*(reduce?1:.05);if(Math.abs(tg-lift)<.002)lift=tg;
    P.itb.mesh.position.x=EX.itb*lift;pad.position.copy(defP(mm(PAD),'pad'));pad.position.x+=EX.pad*lift;skinPatch.position.x=EX.skin*lift;skinPatch.visible=lift>.02;
    if(lift>.02){P.skin.mesh.visible=P.arms.mesh.visible=false;}else if(!secOn){P.skin.mesh.visible=P.arms.mesh.visible=skinOn;}}
-  controls.update();renderer.render(scene,camera);renderHL(now);placeLabels(now);drawExpLine();
+  controls.update();renderer.render(scene,camera);renderHL(now);renderPip();placeLabels(now);drawExpLine();
   requestAnimationFrame(loop);
 }
 go(0);
