@@ -1,0 +1,805 @@
+<title>髂胫束为什么会痛</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 布局：解剖模型占主体，右侧是逐页讲解卡片；每页切换镜头、高亮对应结构、给出指向标注 */
+:root{
+  --bg:#eef1f3; --surface:#ffffff; --ink:#17212a; --muted:#566570; --line:#d5dde2;
+  --accent:#0b6a72; --accent-soft:#ddeff0; --hot:#d23d24; --hot-soft:#fbe4de;
+  --scene-top:#f7f9fa; --scene-bot:#dfe5e9;
+  --c-muscle:#b8433a; --c-fascia:#9bb6da; --c-bone:#e4d4b2; --c-fat:#efc54a; --c-skin:#e8b89c;
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1215; --surface:#141c21; --ink:#e3eaee; --muted:#93a2ac; --line:#26323a;
+  --accent:#5fc3c6; --accent-soft:#163338; --hot:#ff6a48; --hot-soft:#3a1c15;
+  --scene-top:#1a242a; --scene-bot:#0b1013; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1215; --surface:#141c21; --ink:#e3eaee; --muted:#93a2ac; --line:#26323a;
+  --accent:#5fc3c6; --accent-soft:#163338; --hot:#ff6a48; --hot-soft:#3a1c15;
+  --scene-top:#1a242a; --scene-bot:#0b1013; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin-bottom:14px}
+h1{font-size:clamp(24px,3.2vw,34px);font-weight:900;line-height:1.2;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:14px;align-items:start}
+@media (max-width:960px){.stage{grid-template-columns:1fr}}
+.viewer{position:relative;height:min(80vh,760px);min-height:460px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(var(--scene-top),var(--scene-bot));min-width:0}
+@media (max-width:960px){.viewer{height:62vh;min-height:380px}}
+#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+#ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#labels{position:absolute;inset:0;pointer-events:none}
+.lbl{position:absolute;left:0;top:0;font-size:13px;font-weight:500;white-space:nowrap;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:2px 8px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.lbl.hot{border-color:var(--hot);color:var(--hot);font-weight:700}
+.lbl.act{border-color:var(--accent);color:var(--accent);font-weight:700}
+.tip{position:absolute;left:0;top:0;max-width:260px;background:var(--surface);color:var(--ink);border:2px solid #f2a000;border-radius:8px;padding:6px 10px;font-size:13px;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.15);display:grid;gap:2px}
+.tip b{font-size:14px}
+.lbl.hov{background:#f2a000;border-color:#f2a000;color:#1d1400;font-weight:700;box-shadow:0 0 0 3px rgba(242,160,0,.35);z-index:2}
+.tip span{color:var(--muted)}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:2px}
+.tools .seg button{border:0;padding:2px 9px;border-radius:5px}
+.tools .seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border:0}
+.tools{flex-wrap:wrap;justify-content:flex-end;left:10px}
+.hint{max-width:45%}
+.gait{position:absolute;right:10px;bottom:52px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.gait.hot{border-color:var(--hot);color:var(--hot);font-weight:700}
+.lbl{pointer-events:auto;cursor:default}
+.story{display:flex;flex-wrap:wrap;gap:5px}
+.story button{font:inherit;font-size:13px;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
+.story button[aria-current="step"]{border-color:var(--accent);background:var(--accent);color:var(--surface);font-weight:700}
+.story button.auto{border-style:dashed}
+.seg2{display:flex;gap:6px}
+.seg2 button{flex:1;font:inherit;font-size:14px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);font-weight:700}
+#pState{font-size:14px;padding:6px 10px;border-radius:8px;background:var(--accent-soft)}
+#pState.hot{background:var(--hot-soft)}
+.meter{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.meter i{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:block}
+.meter b{display:block;height:100%;width:10%;background:#9bb6da;border-radius:4px}
+#pInset{width:100%;height:auto;display:block}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px}
+.legend{position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--muted);max-width:calc(100% - 20px)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.tools{position:absolute;right:10px;top:10px;display:flex;gap:6px}
+.tools button{font:inherit;font-size:12px;background:var(--surface);color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer}
+.tools button[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
+.hint{position:absolute;left:10px;top:10px;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:3px 9px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.card h2{font-size:22px;line-height:1.3;margin:0;text-wrap:balance}
+.body{display:grid;gap:10px;font-size:15px}
+.body p{margin:0}
+.body .hot{color:var(--hot);font-weight:700}
+.body .act{color:var(--accent);font-weight:700}
+.body ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.note{font-size:13px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px}
+.warn{font-size:13px;background:var(--hot-soft);border:1px solid var(--hot);border-radius:8px;padding:8px 10px}
+.warn b{color:var(--hot)}
+.flexbox{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.flexhead{display:flex;justify-content:space-between;align-items:baseline}
+#angOut{font-family:var(--f-mono);font-size:26px;font-variant-numeric:tabular-nums}
+.range{position:relative}
+.range .zone{position:absolute;top:50%;height:10px;transform:translateY(-50%);left:calc(18/90*100%);width:calc(20/90*100%);background:var(--hot-soft);border:1px solid var(--hot);border-radius:3px}
+input[type=range]{position:relative;width:100%;accent-color:var(--accent);margin:4px 0;background:transparent}
+.ticks{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+#stateTxt{font-size:14px;padding:6px 10px;border-radius:8px;background:var(--accent-soft)}
+#stateTxt.hot{background:var(--hot-soft)}
+#inset{width:100%;height:auto;max-width:100%;display:block}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.nav{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
+.nav .dots{display:flex;gap:5px;flex:1;flex-wrap:wrap;justify-content:center}
+.nav .dots button{width:14px;height:6px;border-radius:3px;border:0;background:var(--line);cursor:pointer;padding:0}
+.nav .dots button[aria-current="step"]{background:var(--accent)}
+.btn{font:inherit;font-size:14px;font-weight:500;border:1px solid var(--accent);background:var(--accent);color:var(--surface);padding:6px 14px;border-radius:8px;cursor:pointer}
+.btn.ghost{background:none;color:var(--accent)}
+.btn:disabled{opacity:.35;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{margin-top:16px;font-size:12px;color:var(--muted);max-width:110ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>髂胫束为什么会痛</h1>
+    <span class="sub">右腿 · 真实人体解剖数据 · 共 10 页，可按 ← → 翻页</span>
+  </header>
+
+  <div class="stage">
+    <div class="viewer" id="viewer">
+      <canvas id="c" aria-label="右腿肌肉骨骼 3D 解剖模型，可拖动旋转"></canvas>
+      <svg id="ov" aria-hidden="true"></svg>
+      <div id="labels"></div>
+      <div class="tip" id="tip" hidden></div>
+      <div class="gait" id="gait" hidden></div>
+      <div class="loading" id="loading">正在加载解剖模型…</div>
+      <div class="hint">拖动旋转 · 滚轮缩放 · 鼠标移到结构上看名称（手机点一下）</div>
+      <div class="tools">
+        <div class="seg" role="group" aria-label="视角模式"><button id="mStill" aria-pressed="true">静止视角</button><button id="mRun" aria-pressed="false">跑步视角</button></div>
+        <button id="btnSkin" aria-pressed="true">皮肤</button>
+        <button id="btnReset">回到本页视角</button>
+      </div>
+      <div class="legend" aria-label="颜色图例">
+        <span><i style="background:var(--c-muscle)"></i>肌肉</span>
+        <span><i style="background:var(--c-fascia)"></i>筋膜 / 肌腱</span>
+        <span><i style="background:var(--c-bone)"></i>骨</span>
+        <span><i style="background:var(--c-fat)"></i>脂肪垫</span>
+        <span><i style="background:var(--hot)"></i>受刺激处</span>
+        <span><i style="background:var(--c-skin);opacity:.6"></i>皮肤（半透明）</span>
+        <span><i style="background:transparent;border:2px solid #0aa1aa"></i>正在讲的结构</span>
+        <span><i style="background:transparent;border:2px solid #f2a000"></i>鼠标所指</span>
+      </div>
+    </div>
+
+    <section class="card" aria-live="polite">
+      <div class="count"><span id="kicker"></span><span id="pg"></span></div>
+      <h2 id="title"></h2>
+      <div class="body" id="body"></div>
+      <div class="flexbox" id="pelvbox" hidden>
+        <div class="story" id="story" role="group" aria-label="四步"><button data-i="0">① 双脚站</button><button data-i="1">② 抬起左脚</button><button data-i="2">③ 右臀中肌发力</button><button data-i="3">④ 如果它没力</button><button id="stPlay" class="auto">自动播放中</button></div>
+        <div class="seg2" role="group" aria-label="对比"><button id="pStrong" aria-pressed="false">臀中肌有力</button><button id="pWeak" aria-pressed="true">臀中肌无力</button></div>
+        <div id="pState"></div>
+        <div class="meter"><span>髂胫束张力</span><i><b id="tBar"></b></i></div>
+        <svg id="pInset" viewBox="0 0 300 222" role="img" aria-label="正面示意图：右脚单脚站时骨盆是否往左侧下沉，以及髂胫束被拉紧"></svg>
+      </div>
+      <div class="flexbox" id="flexbox" hidden>
+        <div class="flexhead"><b>屈膝角度</b><output id="angOut">0°</output></div>
+        <div class="range"><div class="zone" aria-hidden="true"></div><input type="range" id="flex" min="0" max="90" value="0" aria-label="屈膝角度"></div>
+        <div class="ticks"><span>0° 伸直</span><span>30°</span><span>60°</span><span>90°</span></div>
+        <div id="stateTxt"></div>
+        <svg id="inset" viewBox="0 0 300 200" role="img" aria-label="膝外侧示意图：随屈膝角度，髂胫束相对外上髁的位置变化"></svg>
+        <div class="row"><button class="btn ghost" id="play">播放跑步动作</button><button class="btn ghost" id="to30">停在 30°</button></div>
+      </div>
+      <div class="nav">
+        <button class="btn ghost" id="prev">上一页</button>
+        <div class="dots" id="dots"></div>
+        <button class="btn" id="next">下一页</button>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot">解剖模型来自 BodyParts3D，© The Database Center for Life Science，CC BY-SA 2.1 Japan（本页截取下半身并重新着色）。黄色脂肪垫为示意添加。本页是健康科普，不能代替医生面诊。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(async function(){
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mm=a=>new THREE.Vector3(a[0]*0.01,a[1]*0.01,a[2]*0.01);
+const viewer=document.getElementById('viewer'),canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,1,0.05,200);
+const controls=new THREE.OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=2;controls.maxDistance=40;
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f96,0.65));
+const kl=new THREE.DirectionalLight(0xffffff,1.0);kl.position.set(-6,10,8);scene.add(kl);
+const fl=new THREE.DirectionalLight(0xffffff,0.45);fl.position.set(8,4,6);scene.add(fl);
+const bl=new THREE.DirectionalLight(0xdfeefa,0.5);bl.position.set(-2,6,-10);scene.add(bl);
+
+// ---------- 数据 ----------
+const loading=document.getElementById('loading');
+let meta,buf;
+try{
+  let b64;
+  if(window.__ANAT_META__){meta=window.__ANAT_META__;b64=window.__ANAT_B64__;}
+  else{meta=await (await fetch('data/anat.json')).json();
+    const r=await fetch('data/anat.b64.txt');if(!r.ok)throw new Error(r.status);b64=await r.text();}
+  const bin=atob(b64.replace(/\s+/g,''));
+  const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);buf=u8.buffer;
+}catch(e){loading.textContent='模型加载失败，请刷新重试';return;}
+loading.hidden=true;
+
+const BONES=['hip','hipL','sacrum','l5','femur','tibia','fibula','patella','talus','calc'];
+const MUSCLE_SHADE={tfl:0xc2493d,gmax:0xb03f37,gmed:0xbe4a3e,gmin:0xa93c35,vl:0xb8433a,vi:0xa63a33,vm:0xb8433a,rf:0xbf473d,sart:0xb24139,bfl:0xa43b35,bfs:0xa93d36,st:0xad3f37,sm:0xa33a34,gasl:0xb3423a,gasm:0xb3423a,ta:0xbb463c,fl:0xb5443b,sol:0xa93d36,addm:0xa53b34,addl:0xae3f37,grac:0xb2423a};
+
+function fiberize(mat,axis,amp,period){
+  const a=axis.clone().normalize();
+  const ref=Math.abs(a.y)<0.9?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
+  const u1=new THREE.Vector3().crossVectors(a,ref).normalize(),u2=new THREE.Vector3().crossVectors(a,u1).normalize();
+  mat.onBeforeCompile=sh=>{
+    sh.uniforms.uU1={value:u1};sh.uniforms.uU2={value:u2};sh.uniforms.uAmp={value:amp};sh.uniforms.uF={value:2*Math.PI/period};
+    sh.vertexShader='varying vec3 vWP;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvWP=(modelMatrix*vec4(transformed,1.0)).xyz;');
+    sh.fragmentShader='varying vec3 vWP;uniform vec3 uU1;uniform vec3 uU2;uniform float uAmp;uniform float uF;\n'+sh.fragmentShader.replace('#include <color_fragment>',
+      '#include <color_fragment>\nfloat s1=abs(sin(dot(vWP,uU1)*uF));float s2=abs(sin(dot(vWP,uU2)*uF*1.13+1.7));diffuseColor.rgb*=1.0-uAmp*(1.0-s1*s2);');
+  };
+}
+function pca(pos){
+  const n=pos.length/3;let cx=0,cy=0,cz=0;for(let i=0;i<n;i++){cx+=pos[i*3];cy+=pos[i*3+1];cz+=pos[i*3+2];}cx/=n;cy/=n;cz/=n;
+  let xx=0,xy=0,xz=0,yy=0,yz=0,zz=0;
+  for(let i=0;i<n;i++){const x=pos[i*3]-cx,y=pos[i*3+1]-cy,z=pos[i*3+2]-cz;xx+=x*x;xy+=x*y;xz+=x*z;yy+=y*y;yz+=y*z;zz+=z*z;}
+  let v=new THREE.Vector3(0.1,1,0.1);
+  for(let k=0;k<30;k++){v=new THREE.Vector3(xx*v.x+xy*v.y+xz*v.z,xy*v.x+yy*v.y+yz*v.z,xz*v.x+yz*v.y+zz*v.z).normalize();}
+  return {c:new THREE.Vector3(cx,cy,cz),axis:v};
+}
+
+const P={};
+const mn=meta.min,mx=meta.max;
+for(const p of meta.parts){
+  const q=new Int16Array(buf,p.vo,p.vn*3);const pos=new Float32Array(p.vn*3);
+  for(let i=0;i<p.vn*3;i++){const ax=i%3;pos[i]=((q[i]+32767)/65534*(mx[ax]-mn[ax])+mn[ax])*0.01;}
+  const idx=new Uint32Array(buf,p.io,p.in);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(new THREE.BufferAttribute(idx,1));g.computeVertexNormals();
+  const info=pca(pos);
+  let m;
+  if(p.k==='arms'&&P.skin){m=P.skin.mat;}
+  else if(p.k==='skin'){
+    m=new THREE.MeshStandardMaterial({color:0xe8b89c,roughness:.55,transparent:true,depthWrite:false});
+    m.userData.op={value:.4};
+    m.onBeforeCompile=sh=>{sh.uniforms.uOp=m.userData.op;
+      sh.fragmentShader='uniform float uOp;\n'+sh.fragmentShader.replace('#include <dithering_fragment>','#include <dithering_fragment>\nfloat rim=1.0-abs(dot(normal,normalize(vViewPosition)));gl_FragColor.a=clamp(uOp*(0.28+1.7*pow(rim,2.4)),0.0,0.92);');};
+  }else if(p.k==='itb'){
+    m=new THREE.MeshStandardMaterial({color:0x9bb6da,roughness:.3,metalness:.22,side:THREE.DoubleSide});
+    fiberize(m,info.axis,.22,0.022);
+  }else if(BONES.includes(p.k)){
+    m=new THREE.MeshStandardMaterial({color:0xe4d4b2,roughness:.7});
+  }else{
+    m=new THREE.MeshStandardMaterial({color:MUSCLE_SHADE[p.k]||0xb8433a,roughness:.5,side:THREE.DoubleSide});
+    fiberize(m,info.axis,.28,0.03);
+  }
+  if(!m.userData.base)m.userData.base=m.color.clone();
+  const mesh=new THREE.Mesh(g,m);mesh.userData.k=p.k;
+  if(p.k==='skin'||p.k==='arms')mesh.renderOrder=6;
+  if(p.k==='itb')mesh.renderOrder=4;
+  scene.add(mesh);
+  P[p.k]={mesh,mat:m,pos,base:pos.slice(),kind:(p.k==='skin'||p.k==='arms')?'skin':p.k==='itb'?'fascia':BONES.includes(p.k)?'bone':'muscle'};
+}
+
+// 脂肪垫（示意，位于髂胫束与股骨外上髁之间）
+const A=meta.anchors;
+const PAD=[A.epi[0]-3,A.epi[1]+1,A.epi[2]+6];
+const padMat=new THREE.MeshStandardMaterial({color:0xefc54a,roughness:.45});padMat.userData.base=padMat.color.clone();
+const pad=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),padMat);pad.scale.set(.04,.1,.12);pad.position.copy(mm(PAD));scene.add(pad);
+P.pad={mesh:pad,mat:padMat,kind:'fat'};pad.userData.k='pad';
+
+// 刺激光晕
+function glowTex(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');const g=x.createRadialGradient(64,64,0,64,64,64);
+  g.addColorStop(0,'rgba(255,70,40,1)');g.addColorStop(.35,'rgba(240,50,30,.65)');g.addColorStop(1,'rgba(220,40,20,0)');x.fillStyle=g;x.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
+const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),transparent:true,depthTest:false,depthWrite:false}));
+glow.position.copy(mm([A.epi[0]-8,A.epi[1],A.epi[2]+6]));glow.renderOrder=20;scene.add(glow);
+
+// 箭头（诱因页）
+const arrows=new THREE.Group();scene.add(arrows);arrows.visible=false;
+function arrow(from,dir,len,color){const g=new THREE.Group();const mt=new THREE.MeshBasicMaterial({color,depthTest:false,transparent:true});
+  const sh=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,len*.7,16),mt);sh.position.y=len*.35;const hd=new THREE.Mesh(new THREE.ConeGeometry(.1,len*.3,20),mt);hd.position.y=len*.85;
+  g.add(sh,hd);g.position.copy(from);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());g.traverse(o=>o.renderOrder=21);arrows.add(g);}
+arrow(mm([110,1090,60]),new THREE.Vector3(0,-1,0),.9,0xd23d24);
+arrow(mm([-200,395,90]),new THREE.Vector3(1,0,0),.7,0xd23d24);
+arrow(mm([0,1190,60]),new THREE.Vector3(0,-1,0),.8,0x6b747b);
+arrow(mm([-125,1010,62]),new THREE.Vector3(0,-1,0),.75,0x0aa1aa);
+const ARW=[[[110,1090,60],'hip'],[[-200,395,90],'femur'],[[0,1190,60],'hip'],[[-125,1010,62],'hip']];
+
+// ---------- 骨架变形：双侧髋、膝 + 手臂摆动 ----------
+const KY=(A.epi[1]-3)*0.01,KZ=(A.knee[2]-4)*0.01;
+let HY,HZ;{const f=P.femur.base;let top=-1e9;for(let i=1;i<f.length;i+=3)top=Math.max(top,f[i]);
+  const pts=[];for(let i=0;i<f.length;i+=3)if(f[i+1]>top-0.07)pts.push([f[i],f[i+1],f[i+2]]);pts.sort((a,b)=>b[0]-a[0]);
+  const q=pts.slice(0,Math.max(5,Math.floor(pts.length*.3)));HY=q.reduce((t,v)=>t+v[1],0)/q.length-0.02;HZ=q.reduce((t,v)=>t+v[2],0)/q.length;}
+let SHY=1.42,SHZ=0;{const a=P.arms.base;let top=-1e9,zs=0,n=0;for(let i=1;i<a.length;i+=3)top=Math.max(top,a[i]);for(let i=1;i<a.length;i+=3)if(a[i]>top-0.03){zs+=a[i+1];n++;}SHZ=n?zs/n:0;}
+const PELVIS=['hip','hipL','sacrum','l5'];
+const RIGIDB={femur:0,tibia:1,fibula:1,talus:1,calc:1,patella:.55,pad:0};
+const ss=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+function wts(k,x,y){
+  if(PELVIS.includes(k))return [0,0,1];
+  const sR=(k==='skin')?ss((0.03-x)/0.06):1;
+  if(RIGIDB[k]!==undefined)return [RIGIDB[k],1,sR];
+  return [ss((KY+0.1-y)/0.42),ss((HY+0.06-y)/0.34),sR];
+}
+const rig=[];
+for(const k in P){if(k==='pad')continue;const p=P[k];const n=p.base.length/3;
+  const wk=new Float32Array(n),wh=new Float32Array(n),sr=new Float32Array(n);
+  for(let i=0;i<n;i++){const w=k==='arms'?[0,1,p.base[i*3]<0?1:0]:wts(k,p.base[i*3],p.base[i*3+1]);wk[i]=w[0];wh[i]=w[1];sr[i]=w[2];}
+  const g=p.mesh.geometry;p.bn=g.attributes.normal.array.slice();g.computeBoundingSphere();g.boundingSphere.radius*=1.8;
+  rig.push({k,p,wk,wh,sr});}
+function rotX(y,z,cy,cz,a){const c=Math.cos(a),s=Math.sin(a),dy=y-cy,dz=z-cz;return [cy+dy*c-dz*s,cz+dy*s+dz*c];}
+const D2R=Math.PI/180;
+let pose={kR:0,hR:0,kL:0,hL:0,drop:0,add:0},poseKey='';
+let HXR=-0.09;{const f=P.femur.base;let top=-1e9;for(let i=1;i<f.length;i+=3)top=Math.max(top,f[i]);const xs=[];for(let i=0;i<f.length;i+=3)if(f[i+1]>top-0.07)xs.push(f[i]);xs.sort((a,b)=>b-a);const q=xs.slice(0,Math.max(5,Math.floor(xs.length*.3)));HXR=q.reduce((t,v)=>t+v,0)/q.length;}
+const KXR=A.knee[0]*0.01;
+function rotZ(x,y,cx,cy,a){const c=Math.cos(a),s=Math.sin(a),dx=x-cx,dy=y-cy;return [cx+dx*c-dy*s,cy+dx*s+dy*c];}
+function armAng(side){const hOpp=side?pose.hL:pose.hR;return .7*(hOpp-15)*D2R;}
+function xform(x,y,z,wk,wh,s,out){
+  const ak=(s*pose.kR+(1-s)*pose.kL)*D2R*wk,ah=-(s*pose.hR+(1-s)*pose.hL)*D2R*wh;
+  let r=rotX(y,z,KY,KZ,ak);r=rotX(r[0],r[1],HY,HZ,ah);y=r[0];z=r[1];
+  let tz=0;
+  if(pose.drop||pose.add){const ad=pose.add*D2R,dr=pose.drop*D2R,wr=wh*s,wsk=wk*s,wu=1-wr;
+    if(wsk){const q=rotZ(x,y,KXR,KY,-1.5*ad*wsk);x=q[0];y=q[1];}
+    if(wr){const q=rotZ(x,y,HXR,HY,ad*wr);x=q[0];y=q[1];}
+    if(wu){const q=rotZ(x,y,HXR,HY,-dr*wu);x=q[0];y=q[1];}
+    tz=-1.5*ad*wsk+ad*wr-dr*wu;}
+  out[0]=x;out[1]=y;out[2]=z;out[3]=ak+ah;out[4]=tz;
+}
+const tmp=[0,0,0,0,0];
+function applyPose(){
+  const key=[pose.kR,pose.hR,pose.kL,pose.hL,pose.drop,pose.add].map(v=>v.toFixed(2)).join();if(key===poseKey)return;poseKey=key;
+  const dr=pose.drop*D2R;
+  for(const {k,p,wk,wh,sr} of rig){const b=p.base,o=p.pos,bn=p.bn,on=p.mesh.geometry.attributes.normal.array;
+    if(k==='arms'){const aR=-armAng(1),aL=-armAng(0),cz=Math.cos(-dr),sz=Math.sin(-dr);
+      for(let i=0;i<wk.length;i++){const a=sr[i]?aR:aL,j=i*3;const r=rotX(b[j+1],b[j+2],SHY,SHZ,a);let x=b[j],y=r[0];
+        if(dr){const q=rotZ(x,y,HXR,HY,-dr);x=q[0];y=q[1];}o[j]=x;o[j+1]=y;o[j+2]=r[1];
+        const c=Math.cos(a),s=Math.sin(a);let ny=bn[j+1]*c-bn[j+2]*s,nz=bn[j+1]*s+bn[j+2]*c,nx=bn[j];
+        on[j]=nx*cz-ny*sz;on[j+1]=nx*sz+ny*cz;on[j+2]=nz;}}
+    else for(let i=0;i<wk.length;i++){const j=i*3;
+      xform(b[j],b[j+1],b[j+2],wk[i],wh[i],sr[i],tmp);o[j]=tmp[0];o[j+1]=tmp[1];o[j+2]=tmp[2];
+      const t=tmp[3],c=Math.cos(t),sn=Math.sin(t);let nx=bn[j],ny=bn[j+1]*c-bn[j+2]*sn,nz=bn[j+1]*sn+bn[j+2]*c;
+      if(tmp[4]){const cz=Math.cos(tmp[4]),sz=Math.sin(tmp[4]);const x2=nx*cz-ny*sz;ny=nx*sz+ny*cz;nx=x2;}
+      on[j]=nx;on[j+1]=ny;on[j+2]=nz;}
+    p.mesh.geometry.attributes.position.needsUpdate=true;p.mesh.geometry.attributes.normal.needsUpdate=true;}
+  const pv=defP(mm(PAD),'pad');pad.position.copy(pv);pad.rotation.x=-pose.hR*D2R;
+  glow.position.copy(defP(mm([A.epi[0]-8,A.epi[1],A.epi[2]+6]),'femur'));
+}
+function defP(v,k){const w=wts(k,v.x,v.y);xform(v.x,v.y,v.z,w[0],w[1],w[2],tmp);return new THREE.Vector3(tmp[0],tmp[1],tmp[2]);}
+// 跑步步态（右腿；左腿相位差半个周期），单位：度
+const GH=[[0,30],[.3,-5],[.45,-12],[.62,10],[.82,45],[1,30]],GK=[[0,18],[.12,42],[.38,15],[.62,105],[.85,35],[1,18]];
+function curve(K,t){t=((t%1)+1)%1;for(let i=0;i<K.length-1;i++){const [t0,v0]=K[i],[t1,v1]=K[i+1];if(t<=t1){const u=(t-t0)/(t1-t0);return v0+(v1-v0)*(1-Math.cos(Math.PI*u))/2;}}return K[0][1];}
+let flexDeg=0,running=false,runT0=0,gaitPh=0;
+
+// ---------- 标注锚点 ----------
+const ap=(a,k)=>()=>defP(mm(a),k);
+const AN={
+  hot:ap([A.epi[0]-14,A.epi[1],A.epi[2]+6],'femur'),epi:ap(A.epi,'femur'),pad:ap(PAD,'femur'),troch:ap(A.troch,'femur'),itbTop:ap(A.itbTop,'hip'),itb:ap([A.itb[0]-4,A.itb[1],A.itb[2]],'itb'),
+  itbKnee:ap([A.epi[0]-6,A.epi[1]+60,A.epi[2]+10],'femur'),
+  gerdy:ap(A.itbLow,'tibia'),patella:ap(A.patella,'patella'),
+  tfl:ap(A.tfl,'tfl'),gmax:ap([A.gmax[0]-30,A.gmax[1]+20,A.gmax[2]-40],'gmax'),gmed:ap([A.gmed[0]-25,A.gmed[1]+20,A.gmed[2]],'gmed'),vl:ap([A.vl[0]-8,A.vl[1],A.vl[2]+12],'femur'),
+  hip:ap([A.itbTop[0]+10,A.itbTop[1]+10,A.itbTop[2]-10],'hip'),femur:ap([-85,600,78],'femur'),fibula:ap([-105,300,50],'fibula'),
+  pelvisL:ap([110,1100,60],'hip'),hipJ:()=>defP(new THREE.Vector3(HXR,HY,HZ),'hip'),pelvisC:ap([0,1060,60],'hip'),crestR:ap([A.itbTop[0]+20,A.itbTop[1]+15,A.itbTop[2]],'hip'),crestL:ap([-A.itbTop[0]-20,A.itbTop[1]+15,A.itbTop[2]],'hip'),itbMid:ap([A.itb[0]-4,A.itb[1]+40,A.itb[2]],'itb'),itbTopD:ap(A.itbTop,'itb'),kneeIn:ap([-200,395,90],'femur')
+};
+
+// ---------- 幻灯片 ----------
+const SL=[
+ {k:'定位',t:'疼的是这里',cam:{t:[-60,560,80],o:[-1500,300,1500]},skin:.55,muscles:'normal',focus:[],hl:{},glow:.85,
+  labels:[['hot','痛点：膝外侧','hot',-150,-40,1],['itb','髂胫束','act',-150,0],['patella','髌骨（膝盖骨）','',90,-30,1],['troch','髋外侧（大转子）','',-150,-10,1]],
+  body:`<p>髂胫束综合征最典型的痛点，在<span class="hot">右膝外侧</span>、膝关节缝上方约 2–3 厘米的骨性凸起上（红色发光处）。</p>
+  <p class="warn"><b>先说结论：</b>疼的主要不是髂胫束本身，而是被它压在骨头上的一小块<b>脂肪垫</b>。髂胫束是「压人的」，脂肪垫是「被压疼的」。第 5、6 页会拉近看。</p>
+  <p>皮肤在模型里设成了半透明，能看到下面的肌肉（红色）和骨骼（象牙色）。后面每一页会揭开一层，并用<b>粗描边</b>圈出正在讲的结构，用<b>小圆点</b>标出关键点位。鼠标移到任何一块或任何标签上，都会把对应部位框出来。右上角可以切到<b>跑步视角</b>，看这个人跑起来时各部位怎么动。</p>
+  <p class="note">典型表现：跑到固定距离后开始刺痛，下坡、下楼梯更明显，停下来休息会缓解。<br>自测：平躺，手指按住这个点，把膝盖从弯曲慢慢伸直，30° 左右最痛，就很像髂胫束综合征（Noble 试验）。</p>
+  <p class="note">也有人疼在髋外侧的大转子处，那是相关但不同的问题，最后一页的方法同样适用。</p>`},
+ {k:'骨性标志',t:'先认识几块骨头',cam:{t:[-90,640,75],o:[-1550,120,330]},skin:.18,muscles:'hide',focus:['hip','femur','tibia','fibula','patella'],hl:{femur:'a'},glow:.35,
+  labels:[['hip','髂骨（骨盆外侧）','',-150,-20,1],['troch','大转子','',-110,0,1],['femur','股骨（描边）','act',-90,0],['epi','股骨外上髁','hot',-170,-10,1],['gerdy','Gerdy 结节（胫骨）','',90,30,1]],
+  body:`<p>这是从<b>右侧</b>看的骨架：画面左边是身体后方，右边是前方。描边的是<span class="act">股骨</span>。</p>
+  <p>记住三个点（圆点处）：上面的<b>髂骨</b>、膝盖外侧的<span class="hot">股骨外上髁</span>、膝盖下方胫骨上的 <b>Gerdy 结节</b>。</p>
+  <p>股骨外上髁就是你按到的那个硬硬的凸起，痛点就在它表面。</p>`},
+ {k:'髂胫束',t:'髂胫束：一条银蓝色的筋膜带',cam:{t:[-100,650,80],o:[-1550,120,420]},skin:.14,muscles:'ghost',focus:['itb'],hl:{itb:'a'},glow:.35,
+  labels:[['itbTop','起点：髂嵴','',-130,-20,1],['itb','髂胫束（描边）','act',-120,0],['itbKnee','经过股骨外上髁','hot',-170,-10,1],['gerdy','止点：Gerdy 结节','',-160,30,1]],
+  body:`<p>描边圈出的就是<span class="act">髂胫束</span>。它从<b>髂嵴</b>出发，沿大腿外侧一直下行，跨过膝关节，止于胫骨的 <b>Gerdy 结节</b>。</p>
+  <p>它不是肌肉，是一条又厚又韧的<b>筋膜</b>，自己不会收缩，硬度接近肌腱，几乎拉不长。</p>
+  <p class="note">颜色说明：解剖图谱里肌肉画成带纤维纹的红色，筋膜和肌腱画成有光泽的银白偏蓝，骨骼是象牙色，脂肪是黄色。本模型沿用这套配色。</p>`},
+ {k:'上端的拉力',t:'谁在把它拉紧',cam:{t:[-110,740,70],o:[-1150,120,300]},skin:.14,muscles:'ghost',focus:['tfl','gmax','itb'],hl:{tfl:'a',gmax:'a',itb:'a'},glow:0,
+  labels:[['tfl','阔筋膜张肌','act',60,-30],['gmax','臀大肌','act',-140,-10],['itb','髂胫束','act',-160,40]],
+  body:`<p>髂胫束上端连着两块肌肉：前面的<span class="act">阔筋膜张肌</span>（大约裤兜的位置），后面的<span class="act">臀大肌</span>（大部分浅层纤维汇入髂胫束）。三者都已描边。</p>
+  <p>它们一收缩，髂胫束就被拉紧，这股张力一直传到膝盖外侧。</p>
+  <p class="note">久坐、臀部肌肉发力差时，阔筋膜张肌容易代偿过劳，让髂胫束长期偏紧。</p>`},
+ {k:'膝外侧近景',t:'它在膝盖外侧压着什么',cam:{t:[-112,410,82],o:[-560,70,200]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','vl'],hl:{itb:'a',pad:'h'},itbAlpha:.6,ghostOp:.08,glow:.3,
+  labels:[['itbKnee','髂胫束：压人的（本身少有痛觉神经）','act',-190,-30],['pad','脂肪垫：被压疼的（痛点）','hot',-150,20],['epi','股骨外上髁：垫在下面的骨头','',80,50],['vl','股外侧肌','',-120,-40]],
+  body:`<p>镜头拉近到膝盖外侧，髂胫束（青色描边）调成了半透明。</p>
+  <p>在髂胫束和<b>股骨外上髁</b>之间，夹着一小层<span class="hot">脂肪垫</span>（红色描边里的黄色组织）和疏松结缔组织，有时还有滑囊。这里神经、血管很丰富，非常敏感。</p>
+  <p>外面是硬韧的髂胫束，里面是骨头，中间这层软组织就是会被夹住的地方。</p>
+  <p class="warn"><b>谁在痛？</b>主要是这块<b>脂肪垫</b>（加上可能存在的滑囊）。髂胫束本身像一根结实的绳子，痛觉神经很少，它是施压的一方。这个病以髂胫束命名，是因为它是压迫的来源。</p>
+  <p class="note"><b>痛点在哪：</b>就在股骨外上髁这个骨凸的表面。你用手指按膝外侧骨凸时，隔着皮肤和髂胫束，按到的正是下面发炎的脂肪垫，所以会觉得是「髂胫束痛」。</p>`},
+ {k:'疼痛机制',t:'为什么会痛：屈膝 20–30° 时被压住',cam:{t:[-112,410,75],o:[-640,90,120]},follow:'epi',skin:.1,muscles:'ghost',focus:['itb','pad','femur','tibia','fibula'],hl:{itb:'a',pad:'h'},itbAlpha:.7,ghostOp:.07,glow:'flex',flex:true,
+  labels:[['pad','脂肪垫：被夹住、发炎、疼','hot',-160,10],['itbKnee','髂胫束：从外面往里压','act',-190,-40],['epi','股骨外上髁：从里面顶着','',80,50],['gerdy','Gerdy 结节','',-150,40]],
+  body:`<p>拖动下面的角度，或切到右上角的<b>跑步视角</b>：每一步落地时右膝都会经过红色区间。膝盖弯曲时，髂胫束的走向从外上髁<b>前方</b>转到<b>后方</b>。</p>
+  <p>在 <span class="hot">20–30°</span> 左右它正好压在外上髁上，把脂肪垫挤得最紧。跑步时<b>每一步脚落地</b>膝盖都会经过这个角度，一次长跑就是几千次挤压，脂肪垫发炎、变敏感，于是疼痛。</p>
+  <p class="warn"><b>一句话：</b>髂胫束（外）和外上髁（里）像一把钳子，夹的是中间的脂肪垫。疼的是被夹的脂肪垫，痛点就在膝外侧骨凸上。</p>
+  <p class="note">过去说这是髂胫束来回「摩擦」，但解剖研究发现它被纤维固定在股骨上，并不能真正滑动。现在更认可「压迫」的解释。</p>`},
+ {k:'诱因 ①',t:'谁在撑着骨盆？',cam:{t:[0,700,70],o:[-120,60,2500]},skin:.2,muscles:'ghost',focus:['gmed'],hl:{gmed:'a'},glow:0,arrows:true,pelvis:'balance',
+  labels:[['hipJ','支点：右髋关节（右腿顶在这里）','',-150,40],['pelvisC','重心：身体正中间','',40,-40],['gmed','右臀中肌','act',-150,-40]],
+  body:`<p class="warn"><b>一句话：</b>撑住体重的是<b>右腿的骨头</b>；让骨盆不歪的是<span class="act">右臀中肌</span>。右边的肌肉，管的是左边掉不掉。</p>
+  <p>打个比方：你用一只手握住一根长棍的<b>一端</b>，想让它平举。</p>
+  <ul><li><b>手</b> = 右髋关节，右大腿骨从下面顶着骨盆。</li>
+  <li><b>棍子伸出去的那头</b> = 左边骨盆，左脚抬起后下面没东西撑。</li>
+  <li><b>棍子的重量在中间</b> = 身体重心在正中，在支点的左边，所以总想往左耷拉。</li>
+  <li><b>手腕的劲</b> = 右臀中肌。它把骨盆右边往下拉住，左边才翘得住。</li></ul>
+  <p>下面四步会自动轮播，3D 模型同步做动作；点步骤按钮可以停在某一步。</p>`},
+ {k:'诱因 ②',t:'臀中肌没力：骨盆往左边掉',cam:{t:[0,700,70],o:[-120,60,2500]},skin:.2,muscles:'ghost',focus:['gmed','itb'],hl:{gmed:'a',itb:'a'},glow:0,arrows:true,pelvis:'drop',
+  labels:[['gmed','右臀中肌拉不住','act',-150,-40],['pelvisL','左侧骨盆往下掉（对侧）','hot',30,-40],['kneeIn','右膝往里扣','hot',-150,30]],
+  body:`<p>右臀中肌拉不住，跷跷板失衡，没有腿撑着的<b>左边就往下掉</b>。下面可以在「有力」和「无力」之间切换对比。</p>
+  <p>「对侧骨盆下沉」里的「对侧」，指的是<b>站着那条腿的对面</b>：右脚站，掉的是左边；左脚站，掉的是右边。医生检查时管这个叫 <b>Trendelenburg 征</b>。</p>
+  <p>看画面上的两条线：虚线是水平线，红线连着左右两边的骨盆。骨盆一歪，两条线就张开一个角度。同时右大腿被带着往里收，右膝往里扣。</p>
+  <p class="warn"><b>不是一直歪着。</b>只有右脚单独着地、左脚悬在空中的那一下会掉，左脚一落地就回平。跑步时一步一次，平一下、斜一下。掉的时候左脚在空中，不会比右脚低，腿长也没变。动画把角度放大到约 9°，真实情况通常只有几度。</p>
+  <p class="note">自查：对着镜子右脚单脚站 30 秒，或者做右腿单腿下蹲。正常时两边胯一样高；如果左边胯往下掉、右膝往里扣，说明右臀中肌偏弱。在跑步视频里看起来像屁股左右扭。</p>`},
+ {k:'诱因 ③',t:'骨盆一歪，髂胫束为什么被拉紧',cam:{t:[-60,690,70],o:[-1350,150,1950]},skin:.18,muscles:'ghost',focus:['itb','tfl','gmed'],hl:{itb:'a',tfl:'a',gmed:'a'},glow:.4,arrows:true,pelvis:'itb',
+  labels:[['itbMid','髂胫束被拉紧','hot',-160,10],['tfl','阔筋膜张肌替班，也在拽','act',60,-30],['gmed','臀中肌没力','act',-150,-40],['kneeIn','右膝往里扣','hot',-150,30]],
+  body:`<p>髂胫束上端挂在<b>右侧骨盆</b>，下端挂在<b>膝盖外侧</b>，像一根贴着大腿外侧的弦。骨盆往左歪时，有两件事让它变紧：</p>
+  <ul><li><b>弦被拉长了。</b>骨盆左倾，右大腿相对骨盆往里收、膝盖往里扣，大腿外侧被撑开，上下两个挂点离得更远，髂胫束像拉弓时的弓弦一样被绷紧。示意图里的虚线是它原来的位置。</li>
+  <li><b>有人替班还在拽。</b>臀中肌没力时，同样能把腿往外撑的<span class="act">阔筋膜张肌</span>会去替它干活。可阔筋膜张肌的下端接的就是髂胫束，它越用力，髂胫束被拽得越紧。</li></ul>
+  <p>绷得更紧的髂胫束，在膝外侧压脂肪垫的力也更大。每次右脚落地都重复一次，所以臀中肌弱的人更容易得髂胫束综合征。</p>
+  <p class="note">其他会加重的情况：跑量涨得太快、下坡下楼、倾斜路面、步幅过大、骑行座位不合适。</p>`},
+ {k:'怎么做',t:'对着图看怎么缓解',cam:{t:[-80,700,70],o:[-1650,250,1250]},skin:.16,muscles:'ghost',focus:['gmed','tfl','gmax','itb'],hl:{gmed:'a',tfl:'a',gmax:'a'},glow:.6,
+  labels:[['gmed','练：臀中肌','act',-150,-30],['tfl','放松：阔筋膜张肌','act',60,-30],['gmax','放松：臀大肌','act',-150,10],['itb','不必硬碾髂胫束','',-170,10],['hot','先减量让它消炎','hot',-170,0,1]],
+  body:`<ul>
+  <li><b>先减量，不必完全停。</b>把引起疼痛的运动减到不痛或轻微不适（10 分里不超过 3 分），暂时避开下坡和下楼。</li>
+  <li><b>急性痛时冰敷</b>膝外侧痛点 10–15 分钟。</li>
+  <li><span class="act">放松</span>阔筋膜张肌和臀部，用按摩球就行。髂胫束本身拉不长，泡沫轴使劲碾它意义不大。</li>
+  <li><span class="act">练臀中肌</span>，这是治本：侧卧抬腿、蚌式开合、弹力带侧向走、单腿站；进阶单腿下蹲时膝盖对准第二脚趾，不内扣。</li>
+  <li>恢复训练从平路开始，步幅稍缩短，每周加量不超过约 10%。</li></ul>
+  <p class="warn"><b>这些情况请去看运动医学科或骨科：</b>膝盖明显肿胀、卡住伸不直、打软腿、扭伤后起病、夜里痛醒、调整 2–3 周仍不好转；或者痛点正好在关节缝上而不是上方的骨凸，可能是半月板或外侧副韧带的问题。</p>`}
+];
+
+// ---------- 状态与视觉 ----------
+const muted=new THREE.Color(0x9a9a9a);
+let cur=-1,skinOn=true,glowTarget=0,glowNow=0,itbPulse=false;
+function setLook(s){
+  for(const k in P){const p=P[k];const m=p.mat;if(p.kind==='skin')continue;
+    const isF=s.focus.includes(k);
+    let mode='normal';
+    if(p.kind==='muscle'||p.kind==='fascia'||p.kind==='fat')mode=isF?'focus':(s.muscles==='hide'?'hide':(s.muscles==='ghost'?'ghost':'normal'));
+    if(p.kind==='bone')mode=isF?'focus':(s.focus.length?'dim':'normal');
+    if(k==='pad'&&!isF&&s.muscles!=='normal')mode='hide';
+    p.mesh.visible=mode!=='hide';
+    m.color.copy(m.userData.base);m.emissive.setRGB(0,0,0);
+    m.transparent=false;m.opacity=1;m.depthWrite=true;
+    if(mode==='ghost'){m.color.lerp(muted,.3);m.transparent=true;m.opacity=s.ghostOp||.26;m.depthWrite=false;}
+    if(mode==='dim'){m.color.lerp(muted,.35);}
+    if(mode==='focus'&&p.kind!=='bone'){m.emissive.copy(m.userData.base).multiplyScalar(k==='itb'?.25:.15);}
+    if(k==='itb'&&isF&&s.itbAlpha){m.transparent=true;m.opacity=s.itbAlpha;m.depthWrite=false;}
+    m.needsUpdate=true;
+  }
+  P.skin.mat.userData.op.value=s.skin;
+  P.skin.mesh.visible=P.arms.mesh.visible=skinOn;
+  arrows.visible=!!s.arrows;
+  itbPulse=!!s.arrows;
+  setHL(s.hl);
+}
+let fly=null;
+function camFor(s){
+  const t=mm(s.cam.t),o=mm(s.cam.o);
+  const asp=viewer.clientWidth/viewer.clientHeight;const f=asp<.75?1.55:asp<1.05?1.25:1;
+  return {t,p:t.clone().add(o.multiplyScalar(f))};
+}
+function flyTo(s,instant){const c=camFor(s);
+  if(instant||reduce){camera.position.copy(c.p);controls.target.copy(c.t);fly=null;return;}
+  fly={p0:camera.position.clone(),t0:controls.target.clone(),p1:c.p,t1:c.t,s:performance.now()};}
+
+const elK=document.getElementById('kicker'),elPg=document.getElementById('pg'),elT=document.getElementById('title'),elB=document.getElementById('body'),flexbox=document.getElementById('flexbox');
+const dots=document.getElementById('dots');
+SL.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','第 '+(i+1)+' 页：'+s.t);b.addEventListener('click',()=>go(i));dots.appendChild(b);});
+const labelsEl=document.getElementById('labels'),ov=document.getElementById('ov');
+let curLabels=[];
+function buildLabels(s){
+  labelsEl.innerHTML='';ov.innerHTML='';
+  const NS='http://www.w3.org/2000/svg';
+  curLabels=s.labels.map(([a,txt,kind,dx,dy,ring])=>{ring=0;
+    const el=document.createElement('div');el.className='lbl'+(kind?' '+kind:'');el.textContent=txt;labelsEl.appendChild(el);
+    const lk=(LK[a]||[a])[0];
+    if(P[lk]&&DESC[lk]){const on=()=>{const r=el.getBoundingClientRect(),v=viewer.getBoundingClientRect();setHoverKey(lk,r.left-v.left,r.bottom-v.top-10);};
+      el.addEventListener('mouseenter',on);el.addEventListener('mouseleave',()=>setHoverKey(null));el.addEventListener('click',on);el.style.cursor='help';}
+    const ln=document.createElementNS(NS,'line');ln.setAttribute('stroke-width','1.8');
+    const dot=document.createElementNS(NS,'circle');let pr=null;
+    if(ring){pr=document.createElementNS(NS,'circle');pr.setAttribute('fill','none');pr.setAttribute('stroke-width','2');ov.appendChild(pr);dot.setAttribute('stroke-width','3.5');}
+    else dot.setAttribute('r','4.5');
+    ov.appendChild(ln);ov.appendChild(dot);
+    return {a,el,ln,dot,pr,dx,dy,kind,ring:!!ring};
+  });
+  if(s.pelvis){crestRef=document.createElementNS(NS,'line');crestRef.setAttribute('stroke-dasharray','6 5');crestRef.setAttribute('stroke-width','2');crestLn=document.createElementNS(NS,'line');crestLn.setAttribute('stroke-width','3');crestTx=document.createElementNS(NS,'text');crestTx.setAttribute('font-size','12');crestTx.textContent='水平线';ov.appendChild(crestRef);ov.appendChild(crestLn);ov.appendChild(crestTx);}else{crestRef=crestLn=crestTx=null;}
+  setLabelColors();
+}
+let crestRef=null,crestLn=null,crestTx=null;
+function setLabelColors(){const cs=getComputedStyle(document.documentElement);
+  curLabels.forEach(l=>{const c=l.hov?'#f2a000':(l.kind==='hot'?cs.getPropertyValue('--hot'):l.kind==='act'?cs.getPropertyValue('--accent'):cs.getPropertyValue('--ink')).trim();
+    l.ln.setAttribute('stroke',c);l.ln.setAttribute('stroke-width',l.hov?'3':'1.8');
+    if(l.ring){l.dot.setAttribute('fill',c);l.dot.setAttribute('fill-opacity','.14');l.dot.setAttribute('stroke',c);l.pr.setAttribute('stroke',c);}
+    else{l.dot.setAttribute('fill',c);l.dot.setAttribute('stroke',cs.getPropertyValue('--surface').trim());l.dot.setAttribute('stroke-width','1.5');}});
+  if(cur>=0&&SL[cur].flex)drawInset(flexDeg);}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setLabelColors);
+new MutationObserver(setLabelColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+function placeLabels(now){
+  const w=viewer.clientWidth,h=viewer.clientHeight,sc=w<560?.62:1,R=w<560?14:18;
+  if(crestLn){const cs=getComputedStyle(document.documentElement);const pr=v=>{const q=v.project(camera);return [(q.x*.5+.5)*w,(-q.y*.5+.5)*h];};
+    const a=pr(AN.crestR()),b=pr(AN.crestL()),hot=cs.getPropertyValue('--hot').trim(),mut=cs.getPropertyValue('--muted').trim();
+    const dx=b[0]-a[0];crestRef.setAttribute('x1',a[0]-30);crestRef.setAttribute('y1',a[1]);crestRef.setAttribute('x2',a[0]+dx+40);crestRef.setAttribute('y2',a[1]);crestRef.setAttribute('stroke',mut);
+    crestLn.setAttribute('x1',a[0]-30);crestLn.setAttribute('y1',a[1]-(b[1]-a[1])*30/dx);crestLn.setAttribute('x2',b[0]+40);crestLn.setAttribute('y2',b[1]+(b[1]-a[1])*40/dx);crestLn.setAttribute('stroke',pD>.15&&weak?hot:mut);
+    crestTx.setAttribute('x',a[0]+dx+44);crestTx.setAttribute('y',a[1]+4);crestTx.setAttribute('fill',mut);}
+  const ph=reduce?0.4:((now||0)%1600)/1600;
+  curLabels.forEach(l=>{
+    const v=AN[l.a]().project(camera);const x=(v.x*.5+.5)*w,y=(-v.y*.5+.5)*h;
+    const ew=l.el.offsetWidth,eh=l.el.offsetHeight;
+    let lx=x+l.dx*sc,ly=y+l.dy*sc;
+    lx=Math.max(6,Math.min(w-ew-6,l.dx<0?lx-ew:lx));ly=Math.max(40,Math.min(h-eh-44,ly-eh/2));
+    l.el.style.transform='translate('+lx+'px,'+ly+'px)';
+    const ax=lx+ew/2<x?lx+ew:lx,ay=ly+eh/2;
+    let sx=x,sy=y;
+    if(l.ring){const dx=ax-x,dy=ay-y,d=Math.hypot(dx,dy)||1;sx=x+dx/d*R;sy=y+dy/d*R;
+      l.dot.setAttribute('r',R);l.pr.setAttribute('cx',x);l.pr.setAttribute('cy',y);l.pr.setAttribute('r',R+ph*14);l.pr.setAttribute('opacity',(1-ph)*.9);}
+    l.ln.setAttribute('x1',sx);l.ln.setAttribute('y1',sy);l.ln.setAttribute('x2',ax);l.ln.setAttribute('y2',ay);
+    l.dot.setAttribute('cx',x);l.dot.setAttribute('cy',y);
+  });
+}
+
+function go(i){
+  i=Math.max(0,Math.min(SL.length-1,i));if(i===cur)return;const first=cur<0;cur=i;const s=SL[i];
+  elK.textContent=s.k;elPg.textContent=(i+1)+' / '+SL.length;elT.textContent=s.t;elB.innerHTML=s.body;
+  flexbox.hidden=!s.flex;pelvbox.hidden=!s.pelvis;if(s.pelvis&&s.pelvis!=='balance')setWeak(true);if(s.pelvis==='balance'){stIdx=0;stAuto=true;stT0=performance.now();stCur.lift=0;stCur.drop=0;stCur.g=0;markStory();}
+  [...dots.children].forEach((b,j)=>{if(j===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===SL.length-1;
+  stopPlay();setFlex(s.flex?28:0);
+  setHoverKey(null);setLook(s);buildLabels(s);flyTo(s,first);
+  glowTarget=s.glow==='flex'?null:s.glow;
+}
+document.getElementById('prev').addEventListener('click',()=>go(cur-1));
+document.getElementById('next').addEventListener('click',()=>go(cur+1));
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);});
+document.getElementById('btnReset').addEventListener('click',()=>flyTo(SL[cur]));
+document.getElementById('btnSkin').addEventListener('click',e=>{skinOn=!skinOn;P.skin.mesh.visible=P.arms.mesh.visible=skinOn;e.currentTarget.setAttribute('aria-pressed',skinOn);});
+
+// ---------- 屈膝控件与示意图 ----------
+const flexIn=document.getElementById('flex'),angOut=document.getElementById('angOut'),stateTxt=document.getElementById('stateTxt'),inset=document.getElementById('inset');
+const zoneI=d=>Math.exp(-Math.pow((d-28)/10,2));
+function setFlex(d){flexDeg=d;angOut.textContent=Math.round(d)+'°';if(document.activeElement!==flexIn)flexIn.value=Math.round(d);
+  if(d<15){stateTxt.className='';stateTxt.textContent='接近伸直：髂胫束在外上髁前方，脂肪垫几乎不受压。';}
+  else if(d<=40){stateTxt.className='hot';stateTxt.textContent='压迫区：髂胫束正压在外上髁上，脂肪垫被挤得最紧。跑步落地就在这个角度。';}
+  else{stateTxt.className='';stateTxt.textContent='深屈膝：髂胫束转到外上髁后方，压力下降。所以深蹲到底常不痛，半蹲、下坡反而痛。';}
+  drawInset(d);}
+flexIn.addEventListener('input',()=>{if(running)setRun(false);stopPlay();setFlex(+flexIn.value);});
+let playing=false,pt0=0;const playBtn=document.getElementById('play');
+function stopPlay(){playing=false;playBtn.textContent='播放跑步动作';}
+playBtn.addEventListener('click',()=>{if(running)setRun(false);if(playing){stopPlay();return;}playing=true;pt0=performance.now();playBtn.textContent='停止';});
+document.getElementById('to30').addEventListener('click',()=>{if(running)setRun(false);stopPlay();setFlex(28);});
+function drawInset(d){
+  const cs=getComputedStyle(document.documentElement);const ink=cs.getPropertyValue('--ink').trim(),mut=cs.getPropertyValue('--muted').trim(),hot=cs.getPropertyValue('--hot').trim();
+  const K=[150,112],a=d*Math.PI/180,g0=[26,50];
+  const gx=K[0]+g0[0]*Math.cos(a)-g0[1]*Math.sin(a),gy=K[1]+g0[0]*Math.sin(a)+g0[1]*Math.cos(a);
+  const top=[152,4],E=[148,96],I=zoneI(d);
+  const r=Math.round(239+(210-239)*I),g=Math.round(197+(61-197)*I),b=Math.round(74+(36-74)*I);
+  inset.innerHTML=`
+  <text x="8" y="16" font-size="11" fill="${mut}">膝外侧示意（从外侧看）</text>
+  <text x="14" y="112" font-size="11" fill="${mut}">← 后</text><text x="256" y="112" font-size="11" fill="${mut}">前 →</text>
+  <rect x="132" y="0" width="34" height="100" fill="#e4d4b2" stroke="#b9a983"/>
+  <circle cx="${K[0]}" cy="${K[1]}" r="30" fill="#e4d4b2" stroke="#b9a983"/>
+  <circle cx="${E[0]}" cy="${E[1]}" r="9" fill="#d9c69e" stroke="#b9a983"/>
+  <g transform="rotate(${d} ${K[0]} ${K[1]})"><rect x="128" y="${K[1]+26}" width="44" height="80" rx="6" fill="#e4d4b2" stroke="#b9a983"/>
+   <circle cx="${K[0]+g0[0]}" cy="${K[1]+g0[1]}" r="5" fill="#d9c69e" stroke="#b9a983"/></g>
+  <ellipse cx="${E[0]}" cy="${E[1]}" rx="${11-4*I}" ry="${15-3*I}" fill="rgb(${r},${g},${b})" opacity=".92"/>
+  ${I>.3?`<circle cx="${E[0]}" cy="${E[1]}" r="${18+6*I}" fill="none" stroke="${hot}" stroke-width="2" opacity="${I.toFixed(2)}"/>`:''}
+  <line x1="${top[0]}" y1="${top[1]}" x2="${gx}" y2="${gy}" stroke="#9fb4cd" stroke-width="9" stroke-linecap="round" opacity=".9"/>
+  <line x1="${top[0]}" y1="${top[1]}" x2="${gx}" y2="${gy}" stroke="#d6e1ee" stroke-width="3" stroke-linecap="round"/>
+  <text x="176" y="40" font-size="11" fill="${ink}">髂胫束</text>
+  <text x="124" y="50" text-anchor="end" font-size="11" fill="${ink}">股骨</text>
+  <text x="${E[0]-34}" y="${E[1]+4}" text-anchor="end" font-size="11" fill="${I>.3?hot:ink}">脂肪垫 + 外上髁</text>
+  <text x="200" y="190" font-size="11" fill="${ink}">胫骨</text>`;
+}
+
+// ---------- 描边高亮（屏幕空间轮廓）与悬停 ----------
+const maskScene=new THREE.Scene();
+const MM={a:0xff0000,h:0x00ff00,v:0x0000ff};
+for(const c in MM)MM[c]=new THREE.MeshBasicMaterial({color:MM[c],depthTest:false,depthWrite:false,side:THREE.DoubleSide});
+let hlMeshes=[],hoverMesh=null;
+function mkMask(k,ch){const src=P[k].mesh;const m=new THREE.Mesh(src.geometry,MM[ch]);m.userData.src=src;m.position.copy(src.position);m.scale.copy(src.scale);m.quaternion.copy(src.quaternion);m.renderOrder=ch==='a'?1:ch==='h'?2:3;m.frustumCulled=false;maskScene.add(m);return m;}
+function setHL(hl){hlMeshes.forEach(m=>maskScene.remove(m));hlMeshes=Object.entries(hl||{}).map(([k,c])=>mkMask(k,c));}
+const maskRT=new THREE.WebGLRenderTarget(2,2);
+const compMat=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,
+  uniforms:{tMask:{value:maskRT.texture},uRes:{value:new THREE.Vector2(2,2)},uPx:{value:5},uA:{value:new THREE.Color(0x0aa1aa)},uH:{value:new THREE.Color(0xff3b1f)},uV:{value:new THREE.Color(0xf2a000)},uT:{value:0}},
+  vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}',
+  fragmentShader:`uniform sampler2D tMask;uniform vec2 uRes;uniform float uPx;uniform vec3 uA;uniform vec3 uH;uniform vec3 uV;uniform float uT;varying vec2 vUv;
+  void main(){vec4 c=texture2D(tMask,vUv);vec3 m=vec3(0.0);
+    for(int i=0;i<24;i++){float an=float(i)*0.2617994;vec2 d=vec2(cos(an),sin(an));
+      for(int j=1;j<=3;j++){vec4 t=texture2D(tMask,vUv+d*uPx*float(j)/3.0/uRes);m=max(m,t.rgb);}}
+    vec3 e=m*(1.0-step(0.5,c.rgb));vec3 col=vec3(0.0);float al=0.0;
+    if(e.b>0.01){col=uV;al=e.b;}else if(e.g>0.01){col=uH;al=e.g;}else if(e.r>0.01){col=uA;al=e.r;}
+    else if(c.b>0.5){col=uV;al=0.22;}else if(c.g>0.5){col=uH;al=0.16+0.12*uT;}else if(c.r>0.5){col=uA;al=0.12;}
+    gl_FragColor=vec4(col,al);}`});
+const compScene=new THREE.Scene();const quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),compMat);quad.frustumCulled=false;compScene.add(quad);
+const orthoCam=new THREE.Camera();
+function renderHL(now){
+  if(!maskScene.children.length)return;
+  maskScene.children.forEach(m=>{const o=m.userData.src;m.position.copy(o.position);m.quaternion.copy(o.quaternion);m.scale.copy(o.scale);});
+  const sz=renderer.getDrawingBufferSize(new THREE.Vector2());
+  if(maskRT.width!==sz.x||maskRT.height!==sz.y){maskRT.setSize(sz.x,sz.y);}
+  compMat.uniforms.uRes.value.copy(sz);compMat.uniforms.uPx.value=4.5*renderer.getPixelRatio();
+  compMat.uniforms.uT.value=reduce?.5:.5+.5*Math.sin(now/260);
+  const cc=renderer.getClearColor(new THREE.Color()),ca=renderer.getClearAlpha();
+  renderer.setRenderTarget(maskRT);renderer.setClearColor(0x000000,0);renderer.clear();renderer.render(maskScene,camera);renderer.setRenderTarget(null);renderer.setClearColor(cc,ca);
+  renderer.autoClear=false;renderer.render(compScene,orthoCam);renderer.autoClear=true;
+}
+const DESC={hip:['右髋骨','骨盆的一侧。上缘是髂嵴，髂胫束和阔筋膜张肌从这里起始。'],hipL:['左髋骨','骨盆的另一侧，作参照。'],sacrum:['骶骨','骨盆后方正中的骨头。'],l5:['第 5 腰椎','腰椎最下面一节。'],
+ femur:['股骨','大腿骨。上端外侧是大转子，下端外侧是外上髁，痛点就在外上髁表面。'],tibia:['胫骨','小腿主骨。前外侧的 Gerdy 结节是髂胫束的止点。'],fibula:['腓骨','小腿外侧的细骨，股二头肌止于腓骨头。'],patella:['髌骨','膝盖骨，嵌在股四头肌腱里。'],talus:['距骨','脚踝处的骨头。'],calc:['跟骨','脚后跟的骨头。'],
+ itb:['髂胫束','又厚又韧的筋膜带，从髂嵴到胫骨 Gerdy 结节。不是肌肉，自己不能收缩。'],tfl:['阔筋膜张肌','髋前外侧的小肌肉，向下并入髂胫束，收缩时把它拉紧。'],gmax:['臀大肌','臀部最大的肌肉，大部分浅层纤维汇入髂胫束。'],gmed:['臀中肌','髋外侧的主要外展肌，单腿站时稳住骨盆。它无力是髂胫束疼痛的常见诱因。'],gmin:['臀小肌','在臀中肌深面，协助外展髋关节。'],
+ vl:['股外侧肌','股四头肌的外侧部分，就在髂胫束深面。泡沫轴滚大腿外侧主要压的是它。'],vi:['股中间肌','股四头肌最深的一块，贴着股骨前面。'],vm:['股内侧肌','股四头肌的内侧部分，膝盖内上方的「泪滴」。'],rf:['股直肌','股四头肌正前方的一块，跨过髋和膝。'],sart:['缝匠肌','从髋前方斜跨大腿到膝内侧，人体最长的肌肉。'],
+ bfl:['股二头肌长头','腘绳肌外侧，止于腓骨头，在髂胫束后方。'],bfs:['股二头肌短头','起于股骨，和长头一起止于腓骨头。'],st:['半腱肌','腘绳肌内侧的一块。'],sm:['半膜肌','腘绳肌内侧、较深的一块。'],gasl:['腓肠肌（外侧头）','小腿肚，起于股骨髁后方，向下形成跟腱。'],gasm:['腓肠肌（内侧头）','小腿肚，起于股骨髁后方，向下形成跟腱。'],
+ ta:['胫骨前肌','小腿前外侧，负责勾脚。'],fl:['腓骨长肌','小腿外侧，帮助脚外翻、稳住脚踝。'],sol:['比目鱼肌','在腓肠肌深面，小腿肚的主力。'],addm:['大收肌','大腿内侧最大的内收肌。'],addl:['长收肌','大腿内侧，把腿往里收。'],grac:['股薄肌','大腿最内侧的细长肌肉。'],pad:['脂肪垫（示意）','夹在髂胫束与股骨外上髁之间的脂肪和疏松组织，神经丰富，是疼痛的来源。']};
+const tip=document.getElementById('tip');
+const LK={hipJ:['femur'],itbMid:['itb'],hot:['pad','itb'],epi:['femur'],troch:['femur'],femur:['femur'],itbTop:['itb','hip'],itb:['itb'],itbKnee:['itb'],gerdy:['tibia','itb'],patella:['patella'],hip:['hip'],pad:['pad'],tfl:['tfl'],gmax:['gmax'],gmed:['gmed'],vl:['vl'],fibula:['fibula']};
+const hray=new THREE.Raycaster();const hptr=new THREE.Vector2();let hoverKey=null,hoverEv=null,lastPick=0,downXY=null;
+function setHoverKey(k,x,y){
+  if(k!==hoverKey){if(hoverMesh){maskScene.remove(hoverMesh);hoverMesh=null;}if(k)hoverMesh=mkMask(k,'v');hoverKey=k;
+    if(k){tip.innerHTML='<b>'+DESC[k][0]+'</b><span>'+DESC[k][1]+'</span>';}tip.hidden=!k;canvas.style.cursor=k?'pointer':'';curLabels.forEach(l=>{l.hov=!!k&&(LK[l.a]||[l.a]).includes(k);l.el.classList.toggle('hov',l.hov);});setLabelColors();}
+  if(k){const w=viewer.clientWidth,h=viewer.clientHeight;const tw=tip.offsetWidth,th=tip.offsetHeight;
+    let tx=x+16,ty=y+16;if(tx+tw>w-8)tx=x-tw-16;if(ty+th>h-8)ty=y-th-16;tip.style.transform='translate('+Math.max(8,tx)+'px,'+Math.max(8,ty)+'px)';}
+}
+function pickAt(cx,cy){const r=canvas.getBoundingClientRect();hptr.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1);hray.setFromCamera(hptr,camera);
+  const list=[];for(const k in P){if(P[k].kind!=='skin'&&P[k].mesh.visible&&DESC[k])list.push(P[k].mesh);}
+  const hit=hray.intersectObjects(list,false)[0];setHoverKey(hit?hit.object.userData.k:null,cx-r.left,cy-r.top);}
+canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;if(e.buttons){setHoverKey(null);return;}hoverEv=[e.clientX,e.clientY];});
+canvas.addEventListener('pointerleave',()=>{hoverEv=null;setHoverKey(null);});
+canvas.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];});
+canvas.addEventListener('pointerup',e=>{if(!downXY)return;const d=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);downXY=null;if(d<6&&e.pointerType!=='mouse')pickAt(e.clientX,e.clientY);});
+
+// ---------- 渲染循环 ----------
+function resize(){const w=viewer.clientWidth,h=viewer.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(viewer);resize();
+const lastD=new THREE.Vector3();
+const gaitEl=document.getElementById('gait'),mStill=document.getElementById('mStill'),mRun=document.getElementById('mRun');
+function setRun(on){running=on;runT0=performance.now();mStill.setAttribute('aria-pressed',String(!on));mRun.setAttribute('aria-pressed',String(on));gaitEl.hidden=!on;
+  if(on)stopPlay();else setFlex(SL[cur].flex?28:0);}
+mStill.addEventListener('click',()=>setRun(false));mRun.addEventListener('click',()=>setRun(true));
+function updGait(){const k=pose.kR,ph=gaitPh<.12?'右脚落地缓冲':gaitPh<.38?'右脚支撑蹬地':gaitPh<.88?'右腿腾空摆动':'右脚即将落地';
+  const hot=k>=18&&k<=38&&gaitPh<.38;gaitEl.className='gait'+(hot?' hot':'');gaitEl.textContent='右膝 '+Math.round(k)+'° · '+ph+(hot?' · 压迫区':'');}
+const pelvbox=document.getElementById('pelvbox'),pState=document.getElementById('pState'),tBar=document.getElementById('tBar'),pInset=document.getElementById('pInset');
+let weak=true,pT0=performance.now(),pD=0,pLift=1,pPh='R';
+function setWeak(w){weak=w;pT0=performance.now();document.getElementById('pStrong').setAttribute('aria-pressed',String(!w));document.getElementById('pWeak').setAttribute('aria-pressed',String(w));}
+document.getElementById('pStrong').addEventListener('click',()=>setWeak(false));document.getElementById('pWeak').addEventListener('click',()=>setWeak(true));
+const STORY=[
+ {lift:0,drop:0,g:0,t:'① 双脚站',cap:'两条腿像两根柱子，一左一右顶住骨盆。重心在正中间，两边都撑着，骨盆很稳，臀中肌几乎不用出力。'},
+ {lift:1,drop:4.5,g:0,t:'② 抬起左脚（跑步时右脚落地那一刻）',cap:'只剩右腿一根柱子，而且它顶在骨盆的右边，不在正中间。重心（灰色箭头）在支点的左边，骨盆就想往左歪。'},
+ {lift:1,drop:0,g:1,t:'③ 右臀中肌发力',cap:'右臀中肌一头连骨盆右边，一头连右大腿骨。它收紧，把骨盆右边往下拉住，就像握棍子时手腕往下压，左边就翘回来，骨盆水平。'},
+ {lift:1,drop:9,g:-1,t:'④ 如果右臀中肌没力',cap:'拉不住，骨盆左边就掉下去。肌肉在右边，掉的却是左边，所以叫「对侧骨盆下沉」。它只发生在右脚单独着地的那一下，左脚落地后就回平。'}];
+let stIdx=0,stAuto=true,stT0=performance.now();const stCur={lift:0,drop:0,g:0};
+function markStory(){document.querySelectorAll('#story button[data-i]').forEach(b=>{if(+b.dataset.i===stIdx)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  const pb=document.getElementById('stPlay');pb.textContent=stAuto?'自动播放中':'继续自动播放';pb.setAttribute('aria-pressed',String(stAuto));}
+document.querySelectorAll('#story button[data-i]').forEach(b=>b.addEventListener('click',()=>{stIdx=+b.dataset.i;stAuto=false;markStory();}));
+document.getElementById('stPlay').addEventListener('click',()=>{stAuto=true;stT0=performance.now();markStory();});
+markStory();
+function drawStory(now){
+  const cs=getComputedStyle(document.documentElement),ink=cs.getPropertyValue('--ink').trim(),mut=cs.getPropertyValue('--muted').trim(),acc=cs.getPropertyValue('--accent').trim(),hot=cs.getPropertyValue('--hot').trim();
+  const L=stCur.lift,dr=stCur.drop,gOn=Math.max(0,stCur.g),gW=Math.max(0,-stCur.g),H=[112,80];
+  const R=(x,y)=>{const a=dr*D2R,dx=x-H[0],dy=y-H[1];return [H[0]+dx*Math.cos(a)-dy*Math.sin(a),H[1]+dx*Math.sin(a)+dy*Math.cos(a)];};
+  const P2=a=>a[0].toFixed(1)+','+a[1].toFixed(1);
+  const hipL=R(188,80),kneeL=[hipL[0]+4*L,hipL[1]+62-20*L],footL=[kneeL[0],kneeL[1]+60-28*L];
+  const cg=R(150,62),pulse=reduce?0:3*Math.sin(now/200);
+  pInset.innerHTML=`
+  <text x="6" y="12" font-size="10" fill="${mut}">正面示意：画面左边是他的右腿</text>
+  <line x1="40" y1="44" x2="270" y2="44" stroke="${mut}" stroke-dasharray="4 4"/><text x="272" y="47" font-size="10" fill="${mut}">水平</text>
+  <line x1="20" y1="206" x2="290" y2="206" stroke="${mut}"/><text x="250" y="218" font-size="10" fill="${mut}">地面</text>
+  <path d="M${P2(R(78,42))} Q${P2(R(150,22))} ${P2(R(222,42))} L${P2(R(212,72))} Q${P2(R(188,98))} ${P2(R(150,100))} Q${P2(R(112,98))} ${P2(R(88,72))} Z" fill="#e4d4b2" stroke="#b9a983"/>
+  <text x="${R(140,80)[0]}" y="${R(140,80)[1]}" font-size="11" fill="${ink}">骨盆</text>
+  <line x1="112" y1="80" x2="116" y2="150" stroke="#d9c69e" stroke-width="11" stroke-linecap="round"/>
+  <line x1="116" y1="150" x2="116" y2="204" stroke="#d9c69e" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="98" cy="88" r="6" fill="#d9c69e"/>
+  <line x1="${hipL[0]}" y1="${hipL[1]}" x2="${kneeL[0]}" y2="${kneeL[1]}" stroke="#d9c69e" stroke-width="11" stroke-linecap="round" opacity="${1-.35*L}"/>
+  <line x1="${kneeL[0]}" y1="${kneeL[1]}" x2="${footL[0]}" y2="${footL[1]}" stroke="#d9c69e" stroke-width="10" stroke-linecap="round" opacity="${1-.35*L}"/>
+  <text x="124" y="196" font-size="11" fill="${ink}" font-weight="700">右腿</text>
+  <text x="${footL[0]+10}" y="${footL[1]-4}" font-size="11" fill="${ink}" font-weight="700">左腿${L>.5?'（抬起）':''}</text>
+  <path d="M112,80 l-11,18 h22 z" fill="${ink}" opacity=".85"/>
+  <text x="6" y="112" font-size="11" fill="${ink}" font-weight="700">支点：右髋 →</text>
+  <path d="M${P2(R(86,46))} L${P2(R(110,50))} L102,86 L94,84 Z" fill="#be4a3e" opacity="${.45+.55*gOn-.3*gW}"/>
+  <text x="4" y="34" font-size="11" fill="${acc}" font-weight="700">右臀中肌${gOn>.5?'：往下拉住':gW>.5?'：没力':''}</text>
+  ${gOn>.3?`<path d="M74,${52+pulse} v26 m-6,-8 l6,8 l6,-8" stroke="${acc}" stroke-width="3" fill="none"/>`:''}
+  <path d="M${cg[0]},${cg[1]-42} V${cg[1]-6} m-7,-9 l7,9 l7,-9" stroke="${mut}" stroke-width="3" fill="none"/>
+  <text x="${cg[0]+8}" y="${cg[1]-30}" font-size="10" fill="${mut}">重心（身体重量）</text>
+  ${stIdx===1&&L>.5?`<path d="M232,48 q12,18 0,34" stroke="${hot}" stroke-width="2" fill="none"/><path d="M226,78 l6,6 l4,-8" stroke="${hot}" stroke-width="2" fill="none"/><text x="236" y="98" font-size="10" fill="${hot}">想往左歪</text>`:''}
+  ${stIdx===3&&dr>5?`<text x="${R(222,42)[0]-20}" y="${R(222,42)[1]+30}" font-size="11" fill="${hot}" font-weight="700">左边掉下去</text>`:''}`;
+}
+function pelvisFrame(now){
+  const md=SL[cur].pelvis;
+  document.querySelector('#pelvbox .seg2').hidden=md==='balance';document.querySelector('#pelvbox .meter').hidden=md==='balance';
+  document.getElementById('story').hidden=md!=='balance';
+  if(md==='balance'){
+    if(stAuto&&now-stT0>3300){stIdx=(stIdx+1)%4;stT0=now;markStory();}
+    const tg=STORY[stIdx];for(const k of ['lift','drop','g'])stCur[k]+=(tg[k]-stCur[k])*(reduce?1:.07);
+    if(!running){pose.hL=35*stCur.lift;pose.kL=70*stCur.lift;pose.kR=6+6*stCur.lift;pose.hR=3*stCur.lift;}
+    let dropNow=stCur.drop;
+    if(running){const st=gaitPh<.38?Math.sin(Math.PI*gaitPh/.38):0;dropNow=(stIdx===3?9:stIdx===1?4.5:0)*st;}
+    pD=dropNow/9;pose.drop=dropNow;pose.add=dropNow*.6;
+    P.itb.mat.emissive.setRGB(0,0,0);P.itb.mat.color.copy(P.itb.mat.userData.base);
+    const gm=P.gmed.mat,gOn=Math.max(0,stCur.g),gWeak=Math.max(0,-stCur.g);
+    gm.color.copy(gm.userData.base).lerp(new THREE.Color(0x9a9a9a),.6*gWeak);
+    gm.emissive.copy(gm.userData.base).multiplyScalar(.12+.45*gOn*(reduce?1:.7+.3*Math.sin(now/180)));
+    pState.className=stIdx===3?'hot':'';pState.innerHTML='<b>'+tg.t+'</b><br>'+tg.cap;
+    drawStory(now);return;}
+  // d: 0 = 骨盆水平，1 = 左侧下沉到底
+  let d;
+  if(running){const ph=gaitPh;pPh=ph<.38?'R':'X';pLift=ph<.38?1:0;d=weak&&ph<.38?Math.sin(Math.PI*ph/.38):0;}
+  else{const ph=(((now-pT0)/1000)/(reduce?7:3.6))%1;
+    // 前半拍：右脚单独着地、左脚抬起；后半拍：左脚落地，两脚都撑
+    if(ph<.55){const u=ph/.55;pLift=Math.min(1,Math.sin(Math.PI*u)*1.6);d=weak?Math.sin(Math.PI*u):0;pPh='R';}
+    else{pLift=0;d=0;pPh='B';}
+    pose.hL=35*pLift;pose.kL=70*pLift;pose.kR=6+8*pLift+8*d;pose.hR=3*pLift;}
+  pD=d;pose.drop=9*d;pose.add=6*d;
+  const T=weak?d:0;
+  P.itb.mat.emissive.setRGB(.55*T,.04*T,.02*T);P.itb.mat.color.copy(P.itb.mat.userData.base).lerp(new THREE.Color(0xd23d24),.65*T);
+  tBar.style.width=(12+80*T)+'%';tBar.style.background=T>.5?'var(--hot)':'#9bb6da';
+  pState.className=T>.4?'hot':'';
+  const beat=pPh==='R'?'<b>此刻：右脚单独着地，左脚在空中</b><br>':pPh==='B'?'<b>此刻：左脚也落地了，两只脚都撑着</b><br>':'<b>此刻：右脚离地</b><br>';
+  pState.innerHTML=beat+(pPh!=='R'?'骨盆回到水平。下一次右脚单独着地时，才会再掉一下。':!weak?'右臀中肌拉得住，骨盆保持水平，右膝对准脚尖，髂胫束不额外受力。'
+    :(T>.4?'右臀中肌拉不住：左侧骨盆往下掉，右大腿往里收、右膝往里扣，大腿外侧的髂胫束被拉长绷紧。':'右臀中肌拉不住，骨盆开始往左边掉…'));
+  drawPelvis(T,d,md);
+}
+function drawBalance(now){
+  const cs=getComputedStyle(document.documentElement),ink=cs.getPropertyValue('--ink').trim(),mut=cs.getPropertyValue('--muted').trim(),acc=cs.getPropertyValue('--accent').trim();
+  const pulse=reduce?0:4*Math.sin(now/300);
+  pInset.innerHTML=`
+  <text x="6" y="12" font-size="10" fill="${mut}">正面示意：画面左边是他的右腿</text>
+  <line x1="40" y1="44" x2="270" y2="44" stroke="${mut}" stroke-dasharray="4 4"/><text x="272" y="47" font-size="10" fill="${mut}">水平</text>
+  <path d="M78,42 Q150,22 222,42 L212,72 Q188,98 150,100 Q112,98 88,72 Z" fill="#e4d4b2" stroke="#b9a983"/>
+  <text x="138" y="70" font-size="11" fill="${ink}">骨盆</text>
+  <path d="M112,80 l-12,20 h24 z" fill="${ink}" opacity=".85"/>
+  <text x="8" y="116" font-size="11" fill="${ink}" font-weight="700">支点：右髋 →</text>
+  <line x1="112" y1="100" x2="116" y2="150" stroke="#d9c69e" stroke-width="11" stroke-linecap="round"/>
+  <line x1="116" y1="150" x2="116" y2="202" stroke="#d9c69e" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="98" cy="88" r="6" fill="#d9c69e"/>
+  <path d="M86,46 L110,50 L102,86 L94,84 Z" fill="#be4a3e"/>
+  <path d="M74,${50+pulse} v28 m-6,-8 l6,8 l6,-8" stroke="${acc}" stroke-width="3" fill="none"/>
+  <text x="6" y="70" font-size="11" fill="${acc}" font-weight="700">臀中肌</text><text x="6" y="84" font-size="11" fill="${acc}" font-weight="700">往下拉</text>
+  <path d="M206,${8-pulse/2} v28 m-7,-9 l7,9 l7,-9" stroke="${mut}" stroke-width="3" fill="none"/>
+  <text x="218" y="24" font-size="11" fill="${ink}" font-weight="700">体重往下压</text>
+  <line x1="188" y1="80" x2="194" y2="122" stroke="#e6dcc8" stroke-width="10" stroke-linecap="round" opacity=".75"/>
+  <line x1="194" y1="122" x2="194" y2="154" stroke="#e6dcc8" stroke-width="9" stroke-linecap="round" opacity=".75"/>
+  <text x="204" y="140" font-size="10" fill="${mut}">左脚抬起，没撑着</text>
+  <text x="124" y="214" font-size="10" fill="${mut}">右脚支撑</text>
+  <text x="150" y="190" font-size="11" fill="${acc}" font-weight="700">两边平衡 → 骨盆水平</text>`;
+}
+function drawPelvis(T,d,md){
+  const cs=getComputedStyle(document.documentElement),ink=cs.getPropertyValue('--ink').trim(),mut=cs.getPropertyValue('--muted').trim(),hot=cs.getPropertyValue('--hot').trim(),acc=cs.getPropertyValue('--accent').trim();
+  const ang=9*d,H=[112,80];
+  const R=(x,y)=>{const a=ang*D2R,dx=x-H[0],dy=y-H[1];return [H[0]+dx*Math.cos(a)-dy*Math.sin(a),H[1]+dx*Math.sin(a)+dy*Math.cos(a)];};
+  const P2=a=>a[0].toFixed(1)+','+a[1].toFixed(1);
+  const knee=[120+12*d,150],foot=[116,202],troch=[98,88];
+  const crR=R(80,44),crL=R(220,44),hipL=R(188,80);
+  const L=pLift,kneeL=[hipL[0]+4*L,hipL[1]+62-20*L],footL=[kneeL[0],kneeL[1]+60-28*L];
+  const col=`rgb(${Math.round(155+(210-155)*T)},${Math.round(182+(61-182)*T)},${Math.round(218+(36-218)*T)})`;
+  const itb=[R(76,48),[knee[0]-13,knee[1]-4],[knee[0]-9,knee[1]+12]];
+  pInset.innerHTML=`
+  <text x="6" y="12" font-size="10" fill="${mut}">正面示意：画面左边是他的右腿</text>
+  <line x1="40" y1="44" x2="270" y2="44" stroke="${mut}" stroke-dasharray="4 4"/><text x="272" y="47" font-size="10" fill="${mut}">水平</text>
+  <line x1="${P2(crR).split(',')[0]}" y1="${crR[1]}" x2="${crL[0]}" y2="${crL[1]}" stroke="${d>.2&&weak?hot:mut}" stroke-width="1.5"/>
+  <path d="M${P2(R(78,42))} Q${P2(R(150,22))} ${P2(R(222,42))} L${P2(R(212,72))} Q${P2(R(188,98))} ${P2(R(150,100))} Q${P2(R(112,98))} ${P2(R(88,72))} Z" fill="#e4d4b2" stroke="#b9a983"/>
+  <text x="${R(150,70)[0]-12}" y="${R(150,70)[1]}" font-size="11" fill="${ink}">骨盆</text>
+  <line x1="${hipL[0]}" y1="${hipL[1]}" x2="${kneeL[0]}" y2="${kneeL[1]}" stroke="#e6dcc8" stroke-width="10" stroke-linecap="round" opacity=".75"/>
+  <line x1="${kneeL[0]}" y1="${kneeL[1]}" x2="${footL[0]}" y2="${footL[1]}" stroke="#e6dcc8" stroke-width="9" stroke-linecap="round" opacity=".75"/>
+  <text x="${footL[0]+10}" y="${footL[1]-4}" font-size="10" fill="${mut}">${L>.5?'左脚在空中':'左脚着地'}</text><line x1="20" y1="206" x2="290" y2="206" stroke="${mut}"/>
+  <line x1="${H[0]}" y1="${H[1]}" x2="${knee[0]}" y2="${knee[1]}" stroke="#d9c69e" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="${troch[0]}" cy="${troch[1]}" r="6" fill="#d9c69e"/>
+  <line x1="${knee[0]}" y1="${knee[1]}" x2="${foot[0]}" y2="${foot[1]}" stroke="#d9c69e" stroke-width="10" stroke-linecap="round"/>
+  <text x="${foot[0]+12}" y="${foot[1]}" font-size="10" fill="${mut}">右脚支撑</text>
+  <path d="M${P2(R(86,46))} L${P2(R(110,50))} L${troch[0]+4},${troch[1]-2} L${troch[0]-4},${troch[1]-4} Z" fill="#be4a3e" opacity="${weak?.45:.95}"/>
+  <text x="4" y="34" font-size="11" fill="${acc}" font-weight="700">右臀中肌</text><line x1="50" y1="34" x2="${R(92,50)[0]}" y2="${R(92,50)[1]}" stroke="${acc}" stroke-width="1"/>
+  ${md==='itb'?`<polyline points="76,48 ${120-13},${150-4} ${120-9},${150+12}" fill="none" stroke="${mut}" stroke-width="2" stroke-dasharray="4 3"/><text x="4" y="214" font-size="10" fill="${mut}">灰色虚线：髂胫束原来的位置</text>`:''}
+  ${md==='itb'?`<path d="M${P2(R(98,52))} L${P2(R(106,56))} L${itb[0][0]+10},${itb[0][1]+40} L${itb[0][0]+5},${itb[0][1]+38} Z" fill="#c2493d" opacity="${.6+.4*T}"/><text x="4" y="150" font-size="11" fill="${acc}" font-weight="700">阔筋膜张肌${T>.4?'替班拽':''}</text><line x1="${T>.4?82:62}" y1="146" x2="${itb[0][0]+8}" y2="${itb[0][1]+30}" stroke="${acc}" stroke-width="1"/>`:''}
+  <polyline points="${itb.map(P2).join(' ')}" fill="none" stroke="${col}" stroke-width="${4+3*T}" stroke-linecap="round" stroke-linejoin="round"/>
+  ${T>.3?`<path d="M${itb[0][0]-1},${itb[0][1]-2} l-5,-9 l9,3z M${itb[2][0]},${itb[2][1]+3} l-2,10 l-5,-7z" fill="${hot}"/>`:''}
+  <text x="4" y="110" font-size="11" fill="${T>.4?hot:ink}" font-weight="${T>.4?700:400}">髂胫束${T>.4?'被拉紧':''}</text>
+  ${weak&&d>.3?`<path d="M${crL[0]+14},${crL[1]-8} v16 m-4,-5 l4,5 l4,-5" stroke="${hot}" stroke-width="2" fill="none"/><text x="${crL[0]-6}" y="${crL[1]+26}" font-size="10" fill="${hot}" font-weight="700">左侧下沉</text>`:''}
+  ${weak&&d>.3?`<path d="M${knee[0]-26},${knee[1]} h14 m-4,-4 l4,4 l-4,4" stroke="${hot}" stroke-width="2" fill="none"/><text x="${knee[0]+12}" y="${knee[1]+4}" font-size="10" fill="${hot}" font-weight="700">右膝内扣</text>`:''}`;
+}
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function loop(now){
+  if(fly){const t=Math.min(1,(now-fly.s)/1000),e=ease(t);camera.position.lerpVectors(fly.p0,fly.p1,e);controls.target.lerpVectors(fly.t0,fly.t1,e);if(t>=1)fly=null;}
+  if(playing){const per=reduce?3.4:1.3,ph=((now-pt0)/1000/per)%1;
+    setFlex(ph<.4?8+32*Math.sin(Math.PI*ph/.4):8+72*Math.sin(Math.PI*(ph-.4)/.6));}
+  if(running){gaitPh=window.__ph!=null?window.__ph:((now-runT0)/1000/(reduce?3:1.15))%1;
+    pose.kR=curve(GK,gaitPh);pose.hR=curve(GH,gaitPh);pose.kL=curve(GK,gaitPh+.5);pose.hL=curve(GH,gaitPh+.5);
+    setFlex(pose.kR);updGait();}
+  else{pose.kR=flexDeg;pose.hR=0;pose.kL=0;pose.hL=0;}
+  pose.drop=0;pose.add=0;
+  if(SL[cur].pelvis)pelvisFrame(now);
+  applyPose();
+  if(arrows.visible){arrows.children.forEach((g,i)=>{const [pp,kk]=ARW[i];g.position.copy(defP(mm(pp),kk));const md=SL[cur].pelvis;g.visible=md==='balance'?(i===2||(i===3&&stCur.g>.5)):(i<2&&(!md||(weak&&pD>.15)));});}
+  {const fk=SL[cur].follow;const d=fk?AN[fk]().sub(mm(A[fk])):new THREE.Vector3();
+   if(fly){camera.position.add(d);controls.target.add(d);}else{const sh=d.clone().sub(lastD);camera.position.add(sh);controls.target.add(sh);}lastD.copy(d);}
+  const gt=glowTarget===null?0.15+0.85*zoneI(flexDeg):glowTarget;
+  glowNow+=(gt-glowNow)*.15;
+  const pulse=reduce?1:.8+.2*Math.sin(now/220);
+  glow.material.opacity=Math.min(1,glowNow*pulse);glow.visible=glowNow>.02;
+  const gs=.22+.12*glowNow;glow.scale.set(gs,gs,gs);
+  const I=glowTarget===null?zoneI(flexDeg):0;
+  padMat.color.copy(padMat.userData.base).lerp(new THREE.Color(0xd23d24),I*.8);
+  if(itbPulse&&!SL[cur].pelvis){P.itb.mat.emissive.setRGB(.35*(.5+.5*Math.sin(now/260)),0.02,0.02);}
+  if(hoverEv&&now-lastPick>40){lastPick=now;pickAt(hoverEv[0],hoverEv[1]);hoverEv=null;}
+  controls.update();renderer.render(scene,camera);renderHL(now);placeLabels(now);
+  requestAnimationFrame(loop);
+}
+go(0);
+requestAnimationFrame(loop);
+})();
+</script>
